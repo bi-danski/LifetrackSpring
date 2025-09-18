@@ -18,3 +18,7 @@ data class RefreshToken(
     @Indexed(expireAfter = "0s")
     val expiresAt: Instant
     )
+
+data class RefreshRequest(
+    val token: String
+)

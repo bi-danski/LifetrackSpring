@@ -12,11 +12,9 @@ import org.lifetrack.lifetrackspring.database.repository.UserRepository
 import org.lifetrack.lifetrackspring.security.HashEncoder
 import org.lifetrack.lifetrackspring.security.TokenEncoder
 import org.lifetrack.lifetrackspring.utils.toResponse
-import org.springframework.data.mongodb.core.aggregation.ArithmeticOperators
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
-import java.util.logging.Logger
 
 @Service
 class AuthService(
@@ -60,7 +58,6 @@ class AuthService(
         )
         val response = userRepository.save<User>(user)
         return response.toResponse()
-//        return UserDataResponse(id = response.id, createdAt = response.createdAt)
     }
 
     fun deleteUser(id: ObjectId){
@@ -72,7 +69,6 @@ class AuthService(
             throw IllegalArgumentException("User Invalid")
         }
         return resp.toResponse()
-//        return UserDataResponse(id = resp.id, createdAt = resp.createdAt)
     }
 
     fun saveRefreshToken(userId: ObjectId, jwtRefreshToken: String): Boolean{
