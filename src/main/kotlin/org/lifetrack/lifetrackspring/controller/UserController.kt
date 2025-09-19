@@ -5,7 +5,9 @@ import org.lifetrack.lifetrackspring.database.model.data.UserDataResponse
 import org.lifetrack.lifetrackspring.services.AuthService
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -21,8 +23,18 @@ class UserController(
     }
 
     @DeleteMapping(path= ["/{id}"])
-    fun delete(@PathVariable id: String) {
+    fun wipeUserData(@PathVariable id: String) {
         authService.deleteUser(ObjectId(id))
+    }
+
+    @PatchMapping
+    fun patchUserData(){
+
+    }
+
+    @PutMapping
+    fun amendUserData(){
+
     }
 
 }
