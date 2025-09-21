@@ -14,7 +14,7 @@ import kotlin.io.encoding.ExperimentalEncodingApi
 class JwtService(
     @param:Value("\${jwt.secret}") private val jwtSecret: String
 ) {
-    private val accessTokenValidityMs: Long = 24L * 60 * 60 * 1000
+    private val accessTokenValidityMs: Long = 12L * 60 * 60 * 1000
     private val refreshTokenValidityMs: Long = 2L * 24L * 60 * 60 * 1000
     @OptIn(ExperimentalEncodingApi::class)
     private val jwtSecretKey = Keys.hmacShaKeyFor(Base64.decode(jwtSecret))

@@ -54,7 +54,6 @@ class AuthService(
             phoneNumber = bodyParams.phoneNumber,
             createdAt = Instant.now(),
             passwordHash = pwHash.passwordHash,
-            passwordSalt = null,
         )
         val response = userRepository.save<User>(user)
         return response.toResponse()
