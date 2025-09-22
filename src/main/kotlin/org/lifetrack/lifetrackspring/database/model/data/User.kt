@@ -21,21 +21,19 @@ data class User(
     val medVisits: MutableList<Visit> = mutableListOf(),
     val medicalRecords: MedicalHistory? = null
 )
-
-@Document("usersVitals")
-data class UserVital(
-    @Id val id: ObjectId,
-    val ownerId: ObjectId,
-    val pulse: Double?,
-    val bloodPressure: Double? = null,
-    val bodyTemperature: Double? = null,
-    val respiratoryRate: Double? = null,
-    val oxygenSaturation: Double? = null,
-    val lastRecordAt: Instant
-)
-
 data class EmergencyContact(
     val name: String,
     val telNumber: Number,
     val relationship: String
+)
+
+@Document("usersVitals")
+data class UserVitals(
+    @Id val id: ObjectId,
+    val pulse: Double? = null,
+    val bloodPressure: Double? = null,
+    val bodyTemperature: Double? = null,
+    val respiratoryRate: Double? = null,
+    val oxygenSaturation: Double? = null,
+    val lastRecordAt: Instant = Instant.now()
 )
