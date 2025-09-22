@@ -14,10 +14,10 @@ data class User(
     val emailAddress: String,
     val passwordHash: String,
     val createdAt: Instant?,
-    val insurance: Insurance? = null,
+    val insuranceRefId: ObjectId? = null,
     val emergencyContact: EmergencyContact? = null,
     val billing: MutableList<Billing>? = mutableListOf(),
-    val myVitals: UserVital? = null,
+    val vitalReferenceId: ObjectId? = null,
     val medVisits: MutableList<Visit> = mutableListOf(),
     val medicalRecords: MedicalHistory? = null
 )

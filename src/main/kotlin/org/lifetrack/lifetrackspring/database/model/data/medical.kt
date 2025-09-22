@@ -1,9 +1,12 @@
 package org.lifetrack.lifetrackspring.database.model.data
 
 import org.bson.types.ObjectId
+import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.mapping.Document
 import java.time.Instant
 import java.time.LocalDate
 
+@Document("medicalHub")
 data class MedicalHistory(
     val id: ObjectId = ObjectId.get(),
     val ownerId: ObjectId,
@@ -13,7 +16,6 @@ data class MedicalHistory(
     val familyHistory: List<String> = emptyList(),
     val updatedAt: Instant
 )
-
 data class Visit(
     val id: ObjectId = ObjectId.get(),
     val ownerId: ObjectId,
@@ -27,7 +29,6 @@ data class Visit(
     val prescriptions: List<Prescription>,
     val labResults: MutableList<LabResult> = mutableListOf()
 )
-
 data class Prescription(
     val id: ObjectId = ObjectId.get(),
     val visitId: ObjectId,
@@ -39,7 +40,6 @@ data class Prescription(
     val notes: String? = null,
     val prescribedAt: Instant,
 )
-
 data class LabResult(
     val id: ObjectId = ObjectId.get(),
     val visitId: String,
@@ -50,4 +50,12 @@ data class LabResult(
     val date: String,
     val notes: String? = null,
     val testedAt: Instant
+)
+@Document("insurances")
+data class Insurance(
+    @Id val id: ObjectId = ObjectId.get(),
+    val provider: String,
+    val coverage: String,
+    val policyNumber: String,
+    val updatedAt: Instant
 )

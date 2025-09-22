@@ -1,10 +1,10 @@
 package org.lifetrack.lifetrackspring.database.repository
 
 import org.bson.types.ObjectId
-import org.lifetrack.lifetrackspring.database.model.data.Billing
 import org.lifetrack.lifetrackspring.database.model.data.Insurance
 import org.springframework.data.mongodb.repository.MongoRepository
 
-interface BillingRepository: MongoRepository<Billing, ObjectId> {
-    fun findBillingsByOwnerId(ownerId: ObjectId): MutableList<Billing>
+interface InsuranceMongoRepository: MongoRepository<Insurance, ObjectId> {
+    fun getInsuranceById(id: ObjectId): Insurance
+    fun deleteInsuranceById(id: ObjectId)
 }
