@@ -22,7 +22,8 @@ data class UserDataRequest(
     @field:NotNull(message="Email address can't be null")
     @field:Email(message = "Invalid email address format")
     val emailAddress: String,
-    val phoneNumber: Number?
+    val phoneNumber: Number?,
+    val accessToken: String? = null
 )
 
 data class UserDataResponse(
@@ -43,6 +44,7 @@ data class LoginAuthRequest(
 )
 
 data class VitalsRequest(
+    val resId: String? = null,
     @field:NotNull
     @field:NotBlank
     val accessToken: String,

@@ -1,40 +1,35 @@
 package org.lifetrack.lifetrackspring.controller
 
 import org.bson.types.ObjectId
-import org.lifetrack.lifetrackspring.database.model.data.UserDataResponse
-import org.lifetrack.lifetrackspring.services.AuthService
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PatchMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.lifetrack.lifetrackspring.database.model.data.UserDataRequest
+import org.lifetrack.lifetrackspring.services.UserService
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/user")
 class UserController(
-    private val authService: AuthService
+    private val userService: UserService
 ) {
     @GetMapping
-    fun getById(@RequestParam id: String): UserDataResponse {
-        return authService.getUserById(ObjectId(id))
+    fun getUserData(@RequestParam id: String, @RequestBody uBody: UserDataRequest): Any {
+        if (uBody.accessToken.isNullOrEmpty()){
+            return HttpStatus.BAD_REQUEST
+        }
+        return userService.findUserById(ObjectId(id), uBody.accessToken)
     }
 
     @DeleteMapping(path= ["/{id}"])
-    fun wipeUserData(@PathVariable id: String) {
-        authService.deleteUser(ObjectId(id))
-    }
-
-    @PatchMapping
-    fun patchUserData(){
-
+    fun wipeUserData(@PathVariable id: String, @RequestBody uBody: UserDataRequest): HttpStatus {
+        if (uBody.accessToken.isNullOrEmpty()){
+            return HttpStatus.BAD_REQUEST
+        }
+        return userService.deleteUser(ObjectId(id), accessToken = uBody.accessToken)
     }
 
     @PutMapping
-    fun amendUserData(){
-
+    fun updateUserData(){
+        // TODO to be continued...
     }
 
 }

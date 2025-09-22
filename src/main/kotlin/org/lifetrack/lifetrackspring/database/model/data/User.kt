@@ -35,5 +35,5 @@ data class UserVitals(
     val bodyTemperature: Double? = null,
     val respiratoryRate: Double? = null,
     val oxygenSaturation: Double? = null,
-    val lastRecordAt: Instant = Instant.now()
+    val lastUpdatedAt: Instant = Instant.now()
 )

@@ -1,12 +1,7 @@
 package org.lifetrack.lifetrackspring.services
 
 import org.bson.types.ObjectId
-import org.lifetrack.lifetrackspring.database.model.data.LoginAuthRequest
-import org.lifetrack.lifetrackspring.database.model.data.RefreshToken
-import org.lifetrack.lifetrackspring.database.model.data.TokenPair
-import org.lifetrack.lifetrackspring.database.model.data.User
-import org.lifetrack.lifetrackspring.database.model.data.UserDataRequest
-import org.lifetrack.lifetrackspring.database.model.data.UserDataResponse
+import org.lifetrack.lifetrackspring.database.model.data.*
 import org.lifetrack.lifetrackspring.database.repository.TokenRepository
 import org.lifetrack.lifetrackspring.database.repository.UserRepository
 import org.lifetrack.lifetrackspring.security.HashEncoder
@@ -15,6 +10,7 @@ import org.lifetrack.lifetrackspring.utils.toResponse
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
+import java.util.logging.Logger
 
 @Service
 class AuthService(
@@ -23,8 +19,8 @@ class AuthService(
     private val hashEncoder: HashEncoder,
     private val tokenEncoder: TokenEncoder,
     private val jwtService: JwtService,
-
 ) {
+    private val zanguZangu = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME)
     fun loginUser(bodyParams: LoginAuthRequest): TokenPair? {
         val response = userRepository.findByEmailAddress(bodyParams.emailAddress) ?: throw IllegalArgumentException("Invalid Credentials")
 
@@ -59,17 +55,6 @@ class AuthService(
         return response.toResponse()
     }
 
-    fun deleteUser(id: ObjectId){
-        userRepository.deleteById(id)
-    }
-
-    fun getUserById(id: ObjectId): UserDataResponse{
-        val resp = userRepository.findById(id).orElseThrow {
-            throw IllegalArgumentException("User Invalid")
-        }
-        return resp.toResponse()
-    }
-
     fun saveRefreshToken(userId: ObjectId, jwtRefreshToken: String): Boolean{
         try{
             val tokenHash = tokenEncoder.hashToken(jwtRefreshToken)
@@ -82,6 +67,7 @@ class AuthService(
             ))
             return true
         }catch (e: Exception){
+            zanguZangu.log(zanguZangu.level, e.message)
             return false
         }
     }
