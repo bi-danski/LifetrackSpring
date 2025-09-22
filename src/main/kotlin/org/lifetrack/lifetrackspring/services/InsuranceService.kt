@@ -31,6 +31,7 @@ class InsuranceService(
         insuranceRepository.deleteInsuranceById(insuranceId)
         return HttpStatus.OK
     }
+
     @Transactional
     fun amendInsurance(insurance: Insurance, accessToken: String): HttpStatus{
         if(!utilities.validateRequestFromUser(insurance.id, accessToken)){
@@ -52,6 +53,6 @@ class InsuranceService(
             return HttpStatus.UNAUTHORIZED
         }
         insuranceRepository.save<Insurance>(insurance)
-        return HttpStatus.OK
+        return HttpStatus.CREATED
     }
 }

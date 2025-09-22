@@ -53,9 +53,11 @@ data class LabResult(
 )
 @Document("insurances")
 data class Insurance(
-    @Id val id: ObjectId = ObjectId.get(),
+    @Id val id: ObjectId,
     val provider: String,
     val coverage: String,
     val policyNumber: String,
     val updatedAt: Instant
 )
+
+

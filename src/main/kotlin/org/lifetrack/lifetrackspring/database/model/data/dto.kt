@@ -25,12 +25,10 @@ data class UserDataRequest(
     val phoneNumber: Number?,
     val accessToken: String? = null
 )
-
 data class UserDataResponse(
 //    val id: ObjectId,
     val createdAt: Instant?
 )
-
 data class LoginAuthRequest(
     @field:NotEmpty(message = "Email Address can't be empty")
     @field:NotBlank(message = "Email address can't be blank")
@@ -66,4 +64,22 @@ data class VitalsResponse(
     val bodyTemperature: Double? = null,
     val respiratoryRate: Double? = null,
     val oxygenSaturation: Double? = null
+)
+
+data class InsuranceRequest(
+    @field:NotNull
+    @field:NotBlank
+    val accessToken: String,
+    @field:NotNull
+    @field:NotBlank
+    val provider: String,
+    @field:NotNull
+    @field:NotBlank
+    val coverage: String,
+    @field:NotNull
+    @field:NotBlank
+    val policyNumber: String,
+    @field:NotNull
+    @field:NotBlank
+    val ownerId: String
 )
