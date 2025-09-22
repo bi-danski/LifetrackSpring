@@ -7,12 +7,10 @@ import org.lifetrack.lifetrackspring.database.model.data.VitalsResponse
 import org.lifetrack.lifetrackspring.services.JwtService
 import org.lifetrack.lifetrackspring.services.UserService
 import org.lifetrack.lifetrackspring.services.VitalService
-import org.lifetrack.lifetrackspring.utils.Utilities
 import org.lifetrack.lifetrackspring.utils.toVitalsResponse
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import java.time.Instant
-
 
 @RestController
 @RequestMapping("/iot/")
@@ -20,7 +18,6 @@ class VitalsController(
     private val vitalService: VitalService,
     private val jwtService: JwtService,
     private val userService: UserService,
-    private val utilities: Utilities
 ) {
     @GetMapping("/vitals")
     fun getUserVitals(@RequestParam userId:String, @RequestBody vBody: VitalsRequest): VitalsResponse{
