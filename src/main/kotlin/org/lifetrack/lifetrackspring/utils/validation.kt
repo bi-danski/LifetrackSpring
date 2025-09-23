@@ -6,7 +6,7 @@ import org.lifetrack.lifetrackspring.services.JwtService
 import org.springframework.stereotype.Component
 
 @Component
-class Utilities(
+class ValidationUtil(
     private val jwtService: JwtService
 ) {
 
