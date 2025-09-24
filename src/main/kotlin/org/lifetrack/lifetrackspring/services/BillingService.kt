@@ -1,7 +1,9 @@
 package org.lifetrack.lifetrackspring.services
 
 import com.mongodb.MongoException
+import com.mongodb.MongoWriteException
 import org.bson.types.ObjectId
+import org.lifetrack.lifetrackspring.database.model.data.Billing
 import org.lifetrack.lifetrackspring.database.model.data.Billings
 import org.lifetrack.lifetrackspring.database.repository.BillingRepository
 import org.lifetrack.lifetrackspring.utils.ValidationUtil
@@ -22,26 +24,46 @@ class BillingService(
 
     }
 
-    fun storeBillings(billingsData: Billings, accessToken: String){
+    fun eraseBillingsInfo(){
 
     }
-    @Transactional
-    fun amendBillings(userId: ObjectId, billingsData: Billings, accessToken: String): HttpStatus{
+
+    fun createBillings(userId: ObjectId, billings: Billings, accessToken: String): HttpStatus{
         if(!validationUtil.validateRequestFromUser(userId, accessToken)){
             return HttpStatus.UNAUTHORIZED
         }
-        if(billingsData.ownerId != userId){
+        if(billings.ownerId != userId){
             return HttpStatus.UNAUTHORIZED
         }
         try {
-            billingRepository.findBillingsByOwnerId(userId)
-            billingRepository.findBillingsByOwnerId(userId)
-            billingRepository.save<Billings>(billingsData)
+            billingRepository.save<Billings>(billings)
+        }catch (_: MongoException){
+            return HttpStatus.INTERNAL_SERVER_ERROR
+        }catch(_: MongoWriteException){
+            return HttpStatus.CONFLICT
+        }
+        return HttpStatus.CREATED
+    }
+
+    @Transactional
+    fun amendBillings(userId: ObjectId, billingData: Billing, accessToken: String): HttpStatus{
+        if(!validationUtil.validateRequestFromUser(userId, accessToken)){
+            return HttpStatus.UNAUTHORIZED
+        }
+        if(billingData.ownerId != userId){
+            return HttpStatus.UNAUTHORIZED
+        }
+        try {
+            val billingsResp = billingRepository.findBillingsByOwnerId(userId)
+            if(billingsResp.billingInfo.add(billingData)){
+                billingRepository.deleteBillingsById(billingsResp.id)
+                billingRepository.save<Billings>(billingsResp)
+            }
         }catch (_: MongoException){
             return HttpStatus.INTERNAL_SERVER_ERROR
         }
         catch(_: Exception){
-            return HttpStatus.CONFLICT
+            return HttpStatus.SERVICE_UNAVAILABLE
         }
         return HttpStatus.OK
     }
