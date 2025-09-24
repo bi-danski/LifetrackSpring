@@ -9,6 +9,7 @@ import java.time.Instant
 data class Billings(
     @Id val id: ObjectId = ObjectId.get(),
     val ownerId: ObjectId,
+//    val updatedAt: Instant,
     val billingInfo: MutableList<Billing>
 )
 

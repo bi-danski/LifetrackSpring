@@ -83,3 +83,14 @@ data class InsuranceRequest(
     val ownerId: String
 )
 
+data class BillingRequest(
+    val accessToken: String,
+    val userId: String,
+)
+data class UserBillingInfo(
+    val billingData: Billing
+)
+
+data class BillingResponse(
+    val billingInfo: MutableList<Billing>
+)

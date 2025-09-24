@@ -7,7 +7,7 @@ import org.lifetrack.lifetrackspring.database.model.data.Billings
 import org.springframework.stereotype.Component
 
 @Component
-class BillingsDelegate {
+object BillingsDelegate {
 
     fun extractBillingServiceById(id: ObjectId, billings: Billings): BillingItem {
         lateinit var billingItem: BillingItem
@@ -33,7 +33,7 @@ class BillingsDelegate {
         return billingHolder
     }
 
-    fun extractBillingByVisitReferenceId(visitRefId: String, billings: Billings): Billing{
+    fun extractBillingInfoByVisitReferenceId(visitRefId: String, billings: Billings): Billing{
         lateinit var billByRef: Billing
         for(billing: Billing in billings.billingInfo){
             if (billing.visitRefId == visitRefId){
@@ -45,7 +45,7 @@ class BillingsDelegate {
         return billByRef
     }
 
-    fun extractBillingByTransactionId(transactionId: String, billings: Billings): Billing{
+    fun extractBillingInfoByTransactionId(transactionId: String, billings: Billings): Billing{
         lateinit var billByTransId: Billing
         for(billing: Billing in billings.billingInfo){
             if (billing.transactionId == transactionId){
@@ -55,5 +55,16 @@ class BillingsDelegate {
             }
         }
         return billByTransId
+    }
+
+    fun removeBillingsInfoById(billingId: ObjectId, billings: Billings): Billings{
+        for(billing: Billing in billings.billingInfo){
+            if (billing.id == billingId){
+                billings.billingInfo.remove(billing)
+            }else {
+                continue
+            }
+        }
+        return billings
     }
 }

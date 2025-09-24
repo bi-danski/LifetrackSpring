@@ -22,10 +22,14 @@ fun User.toResponse(): UserDataResponse{
 
 fun UserVitals.toVitalsResponse(): VitalsResponse{
     return VitalsResponse(
-        pulse = pulse,
-        bloodPressure = bloodPressure,
-        bodyTemperature = bodyTemperature,
-        respiratoryRate = respiratoryRate,
-        oxygenSaturation = oxygenSaturation
+        pulse = this.pulse,
+        bloodPressure = this.bloodPressure,
+        bodyTemperature = this.bodyTemperature,
+        respiratoryRate = this.respiratoryRate,
+        oxygenSaturation = this.oxygenSaturation
     )
+}
+
+fun Billings.toBillingsResponse(): BillingResponse{
+    return BillingResponse(this.billingInfo)
 }
