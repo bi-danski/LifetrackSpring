@@ -6,16 +6,22 @@ import org.springframework.data.mongodb.core.mapping.Document
 import java.time.Instant
 
 @Document("vault")
-data class Billing(
+data class Billings(
     @Id val id: ObjectId = ObjectId.get(),
-    val visitId: String,
     val ownerId: ObjectId,
-    val items: List<BillingItem>,
+    val billingInfo: MutableList<Billing>
+)
+
+data class Billing(
+    val id: ObjectId = ObjectId.get(),
+    val visitRefId: String,
     val total: Double,
     val status: String,
+    val services: BillingItem,
     val paymentMethod: String,
-    val transactionId: String? = null,
-    val updatedAt: Instant
+    val transactionId: String,
+    val updatedAt: Instant,
+    val ownerId: ObjectId
 )
 
 data class BillingItem(
@@ -23,3 +29,4 @@ data class BillingItem(
     val amount: Double,
     val updatedAt: Instant
 )
+

@@ -6,16 +6,27 @@ import org.springframework.data.mongodb.core.mapping.Document
 import java.time.Instant
 import java.time.LocalDate
 
+@Document("insurances")
+data class Insurance(
+    @Id val id: ObjectId,
+    val provider: String,
+    val coverage: String,
+    val policyNumber: String,
+    val updatedAt: Instant
+)
+
 @Document("medicalHub")
 data class MedicalHistory(
     val id: ObjectId = ObjectId.get(),
     val ownerId: ObjectId,
-    val allergies: List<String> = emptyList(),
-    val chronicConditions: List<String> = emptyList(),
-    val pastSurgeries: List<String> = emptyList(),
-    val familyHistory: List<String> = emptyList(),
-    val updatedAt: Instant
+    val allergies: MutableList<String> = mutableListOf(),
+    val chronicConditions: MutableList<String> = mutableListOf(),
+    val pastSurgeries: MutableList<Map<Any, Any>> = mutableListOf(),
+    val familyHistory: MutableList<Map<Any, Any>> = mutableListOf(),
+    val updatedAt: Instant,
+    val visits: MutableList<Visit> = mutableListOf()
 )
+
 data class Visit(
     val id: ObjectId = ObjectId.get(),
     val ownerId: ObjectId,
@@ -23,14 +34,14 @@ data class Visit(
     val department: String,
     val doctor: String,
     val reasonForVisit: String,
-    val diagnosis: List<String> = emptyList(),
+    val diagnosis: MutableList<LabResult> = mutableListOf(),
     val notes: String? = null,
     val visitAt: Instant,
-    val prescriptions: List<Prescription>,
+    val prescriptions: List<Prescription>? = null,
     val labResults: MutableList<LabResult> = mutableListOf()
 )
 data class Prescription(
-    val id: ObjectId = ObjectId.get(),
+//    val id: ObjectId = ObjectId.get(),
     val visitId: ObjectId,
     val ownerId: ObjectId,
     val drugName: String,
@@ -50,14 +61,6 @@ data class LabResult(
     val date: String,
     val notes: String? = null,
     val testedAt: Instant
-)
-@Document("insurances")
-data class Insurance(
-    @Id val id: ObjectId,
-    val provider: String,
-    val coverage: String,
-    val policyNumber: String,
-    val updatedAt: Instant
 )
 
 
