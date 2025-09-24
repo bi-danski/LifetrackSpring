@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.*
 import java.time.Instant
 
 @RestController
-@RequestMapping("/iot/")
+@RequestMapping("/iot/vitals")
 class VitalsController(
     private val vitalService: VitalService,
     private val jwtService: JwtService,
     private val userService: UserService,
 ) {
-    @GetMapping("/vitals")
+    @GetMapping
     fun getUserVitals(@RequestParam userId:String, @RequestBody vBody: VitalsRequest): VitalsResponse{
         return vitalService.retrieveVitals(
             ObjectId(userId),
@@ -28,7 +28,7 @@ class VitalsController(
             .toVitalsResponse()
     }
 
-    @PostMapping("/vitals")
+    @PostMapping
     fun saveUserVitals(@RequestBody vBody: VitalsRequest): HttpStatus{
         if (vBody.accessToken.isEmpty() || vBody.vitalsData == null ) {
             return HttpStatus.BAD_REQUEST
@@ -52,7 +52,7 @@ class VitalsController(
         return HttpStatus.OK
     }
 
-    @DeleteMapping("/vitals")
+    @DeleteMapping
     fun deleteUserVitals(@RequestBody vitalBody: VitalsRequest): HttpStatus{
         if (vitalBody.resId.isNullOrEmpty() && vitalBody.accessToken.isEmpty()){
             return HttpStatus.BAD_REQUEST
@@ -62,7 +62,7 @@ class VitalsController(
         return HttpStatus.OK
     }
 
-    @PatchMapping("/vitals")
+    @PatchMapping
     fun updateUserVitals(@RequestBody nwVitalBody: VitalsRequest): HttpStatus{
         if (nwVitalBody.vitalsData == null && nwVitalBody.accessToken.isEmpty() ) {
             return HttpStatus.BAD_REQUEST

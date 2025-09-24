@@ -87,8 +87,11 @@ data class BillingRequest(
     val accessToken: String,
     val userId: String,
 )
-data class UserBillingInfo(
-    val billingData: Billing
+
+data class BillingPRequest(
+    val accessToken: String,
+    val userId: String,
+    val data: Billing
 )
 
 data class BillingResponse(
