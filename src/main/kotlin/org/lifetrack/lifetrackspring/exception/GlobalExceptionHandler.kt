@@ -21,7 +21,7 @@ class GlobalExceptionHandler {
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(mapOf("error" to ex.localizedMessage,
                 "details" to "Server can't do that! Try again next time",
-                "metro" to ex.stackTraceToString()
+//                "metro" to ex.stackTraceToString()
                 )
             )
     }

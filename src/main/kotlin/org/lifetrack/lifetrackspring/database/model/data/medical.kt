@@ -15,7 +15,7 @@ data class Insurance(
     val updatedAt: Instant
 )
 
-@Document("medicalHub")
+@Document("medicalVault")
 data class MedicalHistory(
     val id: ObjectId = ObjectId.get(),
     val ownerId: ObjectId,
@@ -23,10 +23,41 @@ data class MedicalHistory(
     val chronicConditions: MutableList<ChronicCondition> = mutableListOf(),
     val pastSurgeries: MutableList<PastSurgery> = mutableListOf(),
     val familyHistory: MutableList<FamilyHistory> = mutableListOf(),
-    val updatedAt: Instant,
-    val visits: MutableList<Visit> = mutableListOf()
+//    val visits: MutableList<Visit> = mutableListOf(),
+    val updatedAt: Instant
+)
+data class PastSurgery(
+    val id: ObjectId = ObjectId.get(),
+    val surgeryName: String,
+    val date: LocalDate? = null,
+    val hospital: String? = null,
+    val surgeon: String? = null,
+    val outcome: String? = null,
+    val followUpRequired: Boolean = false,
+    val notes: String? = null
+)
+data class FamilyHistory(
+    val id: ObjectId = ObjectId.get(),
+    val relation: String,
+    val condition: String,
+    val diagnosedAge: Int? = null,
+    val outcome: String? = null,
+    val ageAtDeath: Int? = null,
+    val causeOfDeath: String? = null,
+    val notes: String? = null
+)
+data class ChronicCondition(
+    val id: ObjectId = ObjectId.get(),
+    val name: String,
+    val diagnosedAt: LocalDate? = null,
+    val status: String? = null,
+    val outcome: String? = null,
+    val lastReviewedAt: Instant? = null,
+    val notes: String? = null
 )
 
+
+@Document("visits")
 data class Visit(
     val id: ObjectId = ObjectId.get(),
     val ownerId: ObjectId,
@@ -40,11 +71,10 @@ data class Visit(
     val prescriptions: MutableList<Prescription> = mutableListOf(),
     val labResults: MutableList<LabResult> = mutableListOf()
 )
-
 data class Prescription(
     val id: ObjectId = ObjectId.get(),
-    val visitId: ObjectId,
-    val ownerId: ObjectId,
+    val visitIdRef: ObjectId,
+    val ownerIdRef: ObjectId,
     val drugName: String,
     val dosage: String,
     val frequency: String,
@@ -52,7 +82,6 @@ data class Prescription(
     val notes: String? = null,
     val prescribedAt: Instant,
 )
-
 data class LabResult(
     val id: ObjectId = ObjectId.get(),
     val visitId: ObjectId,
@@ -64,7 +93,6 @@ data class LabResult(
     val notes: String? = null,
     val testedAt: Instant
 )
-
 data class Diagnosis(
     val id: ObjectId = ObjectId.get(),
     val visitId: ObjectId,
@@ -78,34 +106,4 @@ data class Diagnosis(
     val updatedAt: Instant
 )
 
-data class ChronicCondition(
-    val id: ObjectId = ObjectId.get(),
-    val name: String,
-    val diagnosedAt: LocalDate? = null,
-    val status: String? = null,
-    val outcome: String? = null,
-    val lastReviewedAt: Instant? = null,
-    val notes: String? = null
-)
 
-data class PastSurgery(
-    val id: ObjectId = ObjectId.get(),
-    val surgeryName: String,
-    val date: LocalDate? = null,
-    val hospital: String? = null,
-    val surgeon: String? = null,
-    val outcome: String? = null,
-    val followUpRequired: Boolean = false,
-    val notes: String? = null
-)
-
-data class FamilyHistory(
-    val id: ObjectId = ObjectId.get(),
-    val relation: String,
-    val condition: String,
-    val diagnosedAge: Int? = null,
-    val outcome: String? = null,
-    val ageAtDeath: Int? = null,
-    val causeOfDeath: String? = null,
-    val notes: String? = null
-)

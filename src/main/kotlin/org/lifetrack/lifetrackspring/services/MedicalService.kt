@@ -4,6 +4,7 @@ import com.mongodb.MongoException
 import com.mongodb.MongoWriteException
 import org.bson.types.ObjectId
 import org.lifetrack.lifetrackspring.database.model.data.MedicalHistory
+import org.lifetrack.lifetrackspring.database.model.data.MedicalPRequest
 import org.lifetrack.lifetrackspring.database.model.delegate.MedicalDelegate
 import org.lifetrack.lifetrackspring.database.repository.MedicalRepository
 import org.lifetrack.lifetrackspring.exception.ResourceNotFound
@@ -55,20 +56,20 @@ class MedicalService(
     }
 
     @Transactional
-    fun amendMedicalHistory(userId: ObjectId, medHub: MedicalHistory, accessToken: String): HttpStatus {
-        if (!validationUtil.validateRequestFromUser(userId, accessToken)) {
+    fun amendMedicalHistory(medicalRequest: MedicalPRequest, accessToken: String): HttpStatus {
+        if (!validationUtil.validateRequestFromUser(ObjectId(medicalRequest.ownerId), accessToken)) {
             throw AccessDeniedException(HttpStatus.UNAUTHORIZED.toString())
         }
-        if(!medicalRepository.existsByOwnerId(userId)){
+        if(!medicalRepository.existsByOwnerId(ObjectId(medicalRequest.ownerId))){
             return HttpStatus.NOT_FOUND
         }
-        val existingEntity = medicalRepository.findMedicalHistoryByOwnerId(userId)
+        val existingEntity = medicalRepository.findMedicalHistoryByOwnerId(ObjectId(medicalRequest.ownerId))
         val updatedEntity = existingEntity.copy(
-            allergies = medHub.allergies.ifEmpty { existingEntity.allergies },
-            chronicConditions = medHub.chronicConditions.ifEmpty { existingEntity.chronicConditions },
-            pastSurgeries = medHub.pastSurgeries.ifEmpty { existingEntity.pastSurgeries },
-            familyHistory = medHub.familyHistory.ifEmpty { existingEntity.familyHistory },
-            visits = medHub.visits.ifEmpty { existingEntity.visits },
+            allergies = medicalRequest.allergies.ifEmpty { existingEntity.allergies },
+            chronicConditions = medicalRequest.chronicConditions.ifEmpty { existingEntity.chronicConditions },
+            pastSurgeries = medicalRequest.pastSurgeries.ifEmpty { existingEntity.pastSurgeries },
+            familyHistory = medicalRequest.familyHistory.ifEmpty { existingEntity.familyHistory },
+            visits = medicalRequest.visits.ifEmpty { existingEntity.visits },
             updatedAt = java.time.Instant.now()
         )
         return try {
@@ -90,4 +91,5 @@ class MedicalService(
         }
         return medicalRepository.findMedicalHistoryByOwnerId(userId)
     }
+
 }

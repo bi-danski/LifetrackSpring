@@ -30,10 +30,10 @@ data class EmergencyContact(
 @Document("usersVitals")
 data class UserVitals(
     @Id val id: ObjectId = ObjectId.get(),
-    val pulse: Double,
-    val bloodPressure: Double,
-    val bodyTemperature: Double,
-    val respiratoryRate: Double,
-    val oxygenSaturation: Double,
+    val pulse: Double?,
+    val bloodPressure: Double?,
+    val bodyTemperature: Double?,
+    val respiratoryRate: Double?,
+    val oxygenSaturation: Double?,
     val lastUpdatedAt: Instant = Instant.now()
 )

@@ -2,10 +2,7 @@ package org.lifetrack.lifetrackspring.controller
 
 import org.apache.coyote.BadRequestException
 import org.bson.types.ObjectId
-import org.lifetrack.lifetrackspring.database.model.data.BRequest
-import org.lifetrack.lifetrackspring.database.model.data.MedicalHistory
-import org.lifetrack.lifetrackspring.database.model.data.MedicalPRequest
-import org.lifetrack.lifetrackspring.database.model.data.MedicalResponse
+import org.lifetrack.lifetrackspring.database.model.data.*
 import org.lifetrack.lifetrackspring.services.MedicalService
 import org.lifetrack.lifetrackspring.utils.toMedicalResponse
 import org.springframework.http.HttpStatus
@@ -26,6 +23,25 @@ class MedicalController(
             .toMedicalResponse()
     }
 
+    @GetMapping("/lab")
+    fun getUserMedicalLabTestResults(@RequestBody body: BRequest): MutableList<LabResult>{
+        val allRecords = medicalService.retrieveMedicalHistory(ObjectId(body.userId), body.accessToken)
+        return medicalService.extractLabResults(allRecords, )
+    }
+
+    @GetMapping("/prescriptions")
+    fun getUserMedicalPrescriptions( @RequestBody body: BRequest): MutableList<Prescription>{
+        val allPrescriptions = medicalService.retrieveMedicalHistory(ObjectId(body.userId), body.accessToken)
+        return medicalService.extractPrescriptions(allPrescriptions)
+    }
+
+    @GetMapping("/diagnosis")
+    fun getUserMedicalDiagnosis(@RequestBody body: BRequest): MutableList<Diagnosis>{
+        val allDiagnosis = medicalService.retrieveMedicalHistory(ObjectId(body.userId), body.accessToken)
+        return medicalService.extractDiagnosis(allDiagnosis)
+    }
+
+
     @PostMapping
     fun initUserMedicalHistory(@RequestParam accessToken: String, @RequestBody body: MedicalPRequest): HttpStatus{
         if(accessToken.isEmpty() && body.ownerId.isEmpty()){
@@ -45,9 +61,13 @@ class MedicalController(
     }
 
     @PatchMapping
-    fun updateUserMedicalHistory(){
-
+    fun updateUserMedicalHistory(@RequestParam accessToken: String, @RequestBody body: MedicalPRequest): HttpStatus{
+        if (accessToken.isEmpty() && body.ownerId.isEmpty()){
+            throw BadRequestException(HttpStatus.BAD_REQUEST.toString())
+        }
+        return medicalService.amendMedicalHistory(body, accessToken = accessToken)
     }
+
 
     @DeleteMapping
     fun deleteUserMedicalHistory( @RequestBody body: BRequest): HttpStatus{
@@ -56,4 +76,6 @@ class MedicalController(
         }
         return medicalService.eraseMedicalHistory(ObjectId(body.userId), body.accessToken)
     }
+
+
 }
