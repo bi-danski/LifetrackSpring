@@ -29,11 +29,11 @@ data class EmergencyContact(
 
 @Document("usersVitals")
 data class UserVitals(
-    @Id val id: ObjectId,
-    val pulse: Double? = null,
-    val bloodPressure: Double? = null,
-    val bodyTemperature: Double? = null,
-    val respiratoryRate: Double? = null,
-    val oxygenSaturation: Double? = null,
+    @Id val id: ObjectId = ObjectId.get(),
+    val pulse: Double,
+    val bloodPressure: Double,
+    val bodyTemperature: Double,
+    val respiratoryRate: Double,
+    val oxygenSaturation: Double,
     val lastUpdatedAt: Instant = Instant.now()
 )

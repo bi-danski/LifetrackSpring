@@ -14,7 +14,7 @@ class BillingController(
     private val billingService: BillingService,
 ) {
     @GetMapping
-    fun getUserBillings(@RequestBody body: BillingRequest): BillingResponse{
+    fun getUserBillings(@RequestBody body: BRequest): BillingResponse{
         if (body.accessToken.isEmpty() && body.userId.isEmpty()){
             throw IllegalArgumentException(HttpStatus.BAD_REQUEST.toString())
         }
@@ -56,7 +56,7 @@ class BillingController(
     }
 
     @DeleteMapping(path=["/{id}"])
-    fun deleteUserBillings(@PathVariable id: String, @RequestBody body: BillingRequest): HttpStatus{
+    fun deleteUserBillings(@PathVariable id: String, @RequestBody body: BRequest): HttpStatus{
         if (body.accessToken.isEmpty() && body.userId.isEmpty()){
             return HttpStatus.BAD_REQUEST
         }
@@ -64,7 +64,7 @@ class BillingController(
     }
 
     @DeleteMapping(path=["/info/{id}"])
-    fun deleteUserBillingsInfo(@PathVariable id: String, @RequestBody body: BillingRequest): HttpStatus{
+    fun deleteUserBillingsInfo(@PathVariable id: String, @RequestBody body: BRequest): HttpStatus{
         if (body.accessToken.isEmpty() && body.userId.isEmpty()){
             return HttpStatus.BAD_REQUEST
         }

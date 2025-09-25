@@ -5,94 +5,36 @@ import org.lifetrack.lifetrackspring.database.model.data.*
 import org.springframework.stereotype.Component
 
 @Component
-class MedicalDelegateImpl: MedicalDelegate {
+class MedicalDelegateImpl : MedicalDelegate {
 
-    override fun extractPrescriptions(medHub: MedicalHistory, visitId: String): MutableList<Prescription>{
-        lateinit var prescriptions: MutableList<Prescription>
-        for (visit: Visit in medHub.visits) {
-            if (visit.id == ObjectId(visitId)) {
-                prescriptions = visit.prescriptions
-                break
-            } else {
-                continue
-            }
-        }
-        return prescriptions
-    }
+    override fun extractPrescriptions(medHub: MedicalHistory, visitId: String): MutableList<Prescription> =
+        medHub.visits.find { it.id == ObjectId(visitId) }?.prescriptions
+            ?: mutableListOf()
 
-    override fun extractLabResults(medHub: MedicalHistory, visitId: String): MutableList<LabResult>{
-        lateinit var labResults: MutableList<LabResult>
-        for (visit: Visit in medHub.visits) {
-            if (visit.id == ObjectId(visitId)) {
-                labResults = visit.labResults
-                break
-            } else {
-                continue
-            }
-        }
-        return labResults
-    }
+    override fun extractLabResults(medHub: MedicalHistory, visitId: String): MutableList<LabResult> =
+        medHub.visits.find { it.id == ObjectId(visitId) }?.labResults
+            ?: mutableListOf()
 
-    override fun extractDiagnosis(medHub: MedicalHistory, visitId: String): MutableList<Diagnosis> {
-        lateinit var diagnosis: MutableList<Diagnosis>
-        for (visit: Visit in medHub.visits) {
-            if (visit.id == ObjectId(visitId)) {
-                diagnosis = visit.diagnosis
-                break
-            } else {
-                continue
-            }
-        }
-        return diagnosis
-    }
+    override fun extractDiagnosis(medHub: MedicalHistory, visitId: String): MutableList<Diagnosis> =
+        medHub.visits.find { it.id == ObjectId(visitId) }?.diagnosis
+            ?: mutableListOf()
 
-    override fun extractSurgeriesByName(medHub: MedicalHistory, surgeryName: String): MutableList<PastSurgery>{
-        lateinit var allSurgeries: MutableList<PastSurgery>
-        for(surgery: PastSurgery in medHub.pastSurgeries){
-            if (surgery.surgeryName == surgeryName || surgery.surgeryName.contains(surgeryName)){
-                allSurgeries.add(surgery)
-            }else{
-                continue
-            }
-        }
-        return allSurgeries
-    }
+    override fun extractSurgeriesByName(medHub: MedicalHistory, surgeryName: String): MutableList<PastSurgery> =
+        medHub.pastSurgeries.filter {
+            it.surgeryName.equals(surgeryName, ignoreCase = true) ||
+                    it.surgeryName.contains(surgeryName, ignoreCase = true)
+        }.toMutableList()
 
-    override fun extractSurgeryById(medHub: MedicalHistory, surgeryId: ObjectId): PastSurgery{
-        lateinit var surGery: PastSurgery
-        for(surgery: PastSurgery in medHub.pastSurgeries){
-            if(surgery.id == surgeryId){
-                surGery = surgery
-                break
-            }else{
-                continue
-            }
-        }
-        return surGery
-    }
+    override fun extractSurgeryById(medHub: MedicalHistory, surgeryId: ObjectId): PastSurgery =
+        medHub.pastSurgeries.first { it.id == surgeryId }
+//            ?: throw NoSuchElementException("No surgery found with id $surgeryId")
 
-    override fun extractChronicConditionsByName(medHub: MedicalHistory, chronicCondition: String): MutableList<ChronicCondition>{
-        lateinit var allChronics: MutableList<ChronicCondition>
-        for(condition: ChronicCondition in medHub.chronicConditions){
-            if (condition.name == chronicCondition || condition.name.contains(chronicCondition)){
-                allChronics.add(condition)
-            }else{
-                continue
-            }
-        }
-        return allChronics
-    }
+    override fun extractChronicConditionsByName(medHub: MedicalHistory, chronicCondition: String): MutableList<ChronicCondition> =
+        medHub.chronicConditions.filter {
+            it.name.equals(chronicCondition, ignoreCase = true) ||
+                    it.name.contains(chronicCondition, ignoreCase = true)
+        }.toMutableList()
 
-    override fun extractChronicConditionById(medHub: MedicalHistory, chronicId: ObjectId): ChronicCondition{
-        lateinit var chronicCondition: ChronicCondition
-        for (condition: ChronicCondition in medHub.chronicConditions){
-            if(condition.id == chronicId){
-                chronicCondition = condition
-                break
-            }else{
-                continue
-            }
-        }
-        return chronicCondition
-    }
+    override fun extractChronicConditionById(medHub: MedicalHistory, chronicId: ObjectId): ChronicCondition =
+        medHub.chronicConditions.first{ it.id == chronicId }
 }

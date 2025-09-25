@@ -4,32 +4,26 @@ import org.lifetrack.lifetrackspring.database.model.data.*
 
 fun User.toRequest(): UserDataRequest{
     return UserDataRequest(
-        userName = userName,
-        emailAddress = emailAddress,
-        password = passwordHash,
-        phoneNumber = phoneNumber,
-        fullName = fullName,
-        id = id.toString()
+        userName = this.userName, emailAddress = this.emailAddress,
+        password = this.passwordHash, phoneNumber = this.phoneNumber,
+        fullName = this.fullName, id = this.id.toString()
     )
 }
 
 fun User.toResponse(): UserDataResponse{
     return UserDataResponse(
 //        id = id,
-        createdAt = createdAt
-    )
+        this.createdAt )
 }
 
 fun UserVitals.toVitalsResponse(): VitalsResponse{
-    return VitalsResponse(
-        pulse = this.pulse,
-        bloodPressure = this.bloodPressure,
-        bodyTemperature = this.bodyTemperature,
-        respiratoryRate = this.respiratoryRate,
-        oxygenSaturation = this.oxygenSaturation
-    )
+    return VitalsResponse(this.pulse, this.bloodPressure, this.bodyTemperature, this.respiratoryRate, this.oxygenSaturation)
 }
 
 fun Billings.toBillingsResponse(): BillingResponse{
     return BillingResponse(this.billingInfo)
+}
+
+fun MedicalHistory.toMedicalResponse(): MedicalResponse{
+    return MedicalResponse(this.allergies, this.chronicConditions, this.pastSurgeries, this.familyHistory, this.updatedAt, this.visits)
 }

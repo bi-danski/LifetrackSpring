@@ -83,17 +83,33 @@ data class InsuranceRequest(
     val ownerId: String
 )
 
-data class BillingRequest(
+data class BRequest(
     val accessToken: String,
     val userId: String,
 )
-
 data class BillingPRequest(
     val accessToken: String,
     val userId: String,
     val data: Billing
 )
-
 data class BillingResponse(
     val billingInfo: MutableList<Billing>
 )
+
+data class MedicalResponse(
+    val allergies: MutableList<String> = mutableListOf(),
+    val chronicConditions: MutableList<ChronicCondition> = mutableListOf(),
+    val pastSurgeries: MutableList<PastSurgery> = mutableListOf(),
+    val familyHistory: MutableList<FamilyHistory> = mutableListOf(),
+    val updatedAt: Instant,
+    val visits: MutableList<Visit> = mutableListOf()
+)
+data class MedicalPRequest(
+    val ownerId: String,
+    val allergies: MutableList<String> = mutableListOf(),
+    val chronicConditions: MutableList<ChronicCondition> = mutableListOf(),
+    val pastSurgeries: MutableList<PastSurgery> = mutableListOf(),
+    val familyHistory: MutableList<FamilyHistory> = mutableListOf(),
+    val visits: MutableList<Visit> = mutableListOf()
+)
+

@@ -7,4 +7,5 @@ import org.springframework.data.mongodb.repository.MongoRepository
 interface MedicalRepository: MongoRepository<MedicalHistory, ObjectId> {
     fun findMedicalHistoryByOwnerId(ownerId: ObjectId): MedicalHistory
     fun deleteMedicalHistoryByOwnerId(ownerId: ObjectId)
+    fun existsByOwnerId(ownerId: ObjectId): Boolean
 }

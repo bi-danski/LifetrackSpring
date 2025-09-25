@@ -1,30 +1,30 @@
+
+import org.lifetrack.lifetrackspring.exception.ResourceNotFound
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
-import java.nio.file.attribute.UserPrincipalNotFoundException
 
 @RestControllerAdvice
 class GlobalExceptionHandler {
 
-    @ExceptionHandler(UserPrincipalNotFoundException::class)
-    fun handleNotFound(ex: UserPrincipalNotFoundException): ResponseEntity<out Map<String, Any?>> {
-        val body = mapOf(
-            "status" to HttpStatus.NOT_FOUND.value(),
-            "details" to "Resource not found",
-            "errors" to ex.message
-        )
-        return ResponseEntity(body, HttpStatus.NOT_FOUND)
+    @ExceptionHandler(ResourceNotFound::class)
+    fun handleNotFound(ex: ResourceNotFound): ResponseEntity <Map<String, String>> {
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(mapOf("error" to ex.message.toString()))
     }
 
     @ExceptionHandler(Exception::class)
     fun handleGeneral(ex: Exception): ResponseEntity<Map<String, Any>> {
-        val body = mapOf(
-            "status" to HttpStatus.INTERNAL_SERVER_ERROR.value(),
-            "details" to "Server can't do that! Try again next time",
-            "errors" to ex.localizedMessage
-        )
-        return ResponseEntity(body, HttpStatus.INTERNAL_SERVER_ERROR)
+        return ResponseEntity
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(mapOf("error" to ex.localizedMessage,
+                "details" to "Server can't do that! Try again next time",
+                "metro" to ex.stackTraceToString()
+                )
+            )
     }
+
+
 }
