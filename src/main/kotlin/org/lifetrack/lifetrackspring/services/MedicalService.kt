@@ -4,8 +4,10 @@ import com.mongodb.MongoException
 import com.mongodb.MongoWriteException
 import org.bson.types.ObjectId
 import org.lifetrack.lifetrackspring.database.model.data.MedicalHistory
+import org.lifetrack.lifetrackspring.database.model.delegate.MedicalDelegate
 import org.lifetrack.lifetrackspring.database.repository.MedicalRepository
 import org.lifetrack.lifetrackspring.utils.ValidationUtil
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.stereotype.Service
@@ -14,8 +16,9 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class MedicalService(
     private val medicalRepository: MedicalRepository,
-    private val validationUtil: ValidationUtil
-) {
+    private val validationUtil: ValidationUtil,
+    @param:Qualifier("medicalDelegateImpl") private val medicalDelegate: MedicalDelegate
+) : MedicalDelegate by medicalDelegate {
 
     fun eraseMedicalHistory(userId: ObjectId, accessToken: String): HttpStatus{
         if(!validationUtil.validateRequestFromUser(userId, accessToken)){

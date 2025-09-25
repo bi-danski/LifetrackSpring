@@ -10,6 +10,7 @@ import org.lifetrack.lifetrackspring.database.model.data.Billings
 import org.lifetrack.lifetrackspring.database.model.delegate.BillingsDelegate
 import org.lifetrack.lifetrackspring.database.repository.BillingRepository
 import org.lifetrack.lifetrackspring.utils.ValidationUtil
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.stereotype.Service
@@ -18,8 +19,10 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class BillingService(
     private val billingRepository: BillingRepository,
-    private val validationUtil: ValidationUtil
-) {
+    private val validationUtil: ValidationUtil,
+    @param:Qualifier("billingsDelegateImpl") private val billingsDelegate: BillingsDelegate
+) : BillingsDelegate by billingsDelegate {
+
     fun createBillings(userId: ObjectId, billings: Billings, accessToken: String): HttpStatus{
         if(!validationUtil.validateRequestFromUser(userId, accessToken)){
             return HttpStatus.UNAUTHORIZED
@@ -92,7 +95,7 @@ class BillingService(
             return HttpStatus.NOT_FOUND
         }
         try{
-            val finalBillings = BillingsDelegate.removeBillingsInfoById(billingId, billResp)
+            val finalBillings = removeBillingsInfoById(billingId, billResp)
             billingRepository.deleteBillingsByOwnerId(billResp.id)
             billingRepository.save<Billings>(finalBillings)
         }catch (_: MongoQueryException){
