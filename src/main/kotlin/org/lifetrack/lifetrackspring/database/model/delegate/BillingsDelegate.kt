@@ -14,6 +14,7 @@ object BillingsDelegate {
         for (billing: Billing in billings.billingInfo) {
             if (billing.id == id) {
                 billingItem = billing.services
+                break
             } else {
                 continue
             }
@@ -26,6 +27,7 @@ object BillingsDelegate {
         for (billing: Billing in billings.billingInfo) {
             if (billing.ownerId == ownerId) {
                 billingHolder = billing
+                break
             } else {
                 continue
             }
@@ -61,6 +63,7 @@ object BillingsDelegate {
         for(billing: Billing in billings.billingInfo){
             if (billing.id == billingId){
                 billings.billingInfo.remove(billing)
+                break
             }else {
                 continue
             }

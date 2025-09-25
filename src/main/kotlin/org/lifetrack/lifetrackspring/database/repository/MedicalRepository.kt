@@ -5,6 +5,6 @@ import org.lifetrack.lifetrackspring.database.model.data.MedicalHistory
 import org.springframework.data.mongodb.repository.MongoRepository
 
 interface MedicalRepository: MongoRepository<MedicalHistory, ObjectId> {
-    fun findMedicalHistoryByOwnerId(ownerId: ObjectId): MutableList<MedicalHistory>
-
+    fun findMedicalHistoryByOwnerId(ownerId: ObjectId): MedicalHistory
+    fun deleteMedicalHistoryByOwnerId(ownerId: ObjectId)
 }
