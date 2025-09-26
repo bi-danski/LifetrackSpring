@@ -1,7 +1,7 @@
 package org.lifetrack.lifetrackspring.controller
 
 import org.bson.types.ObjectId
-import org.lifetrack.lifetrackspring.database.model.data.UserDataRequest
+import org.lifetrack.lifetrackspring.database.model.dto.UserDataRequest
 import org.lifetrack.lifetrackspring.services.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*

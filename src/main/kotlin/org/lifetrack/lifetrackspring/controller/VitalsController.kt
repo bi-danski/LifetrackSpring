@@ -2,8 +2,8 @@ package org.lifetrack.lifetrackspring.controller
 
 import org.bson.types.ObjectId
 import org.lifetrack.lifetrackspring.database.model.data.UserVitals
-import org.lifetrack.lifetrackspring.database.model.data.VitalsRequest
-import org.lifetrack.lifetrackspring.database.model.data.VitalsResponse
+import org.lifetrack.lifetrackspring.database.model.dto.VitalsRequest
+import org.lifetrack.lifetrackspring.database.model.dto.VitalsResponse
 import org.lifetrack.lifetrackspring.services.JwtService
 import org.lifetrack.lifetrackspring.services.UserService
 import org.lifetrack.lifetrackspring.services.VitalService

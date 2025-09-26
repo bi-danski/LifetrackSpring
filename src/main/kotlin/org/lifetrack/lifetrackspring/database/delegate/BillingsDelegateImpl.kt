@@ -1,4 +1,4 @@
-package org.lifetrack.lifetrackspring.database.model.delegate
+package org.lifetrack.lifetrackspring.database.delegate
 
 import org.bson.types.ObjectId
 import org.lifetrack.lifetrackspring.database.model.data.Billing

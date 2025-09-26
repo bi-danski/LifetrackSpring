@@ -1,4 +1,4 @@
-package org.lifetrack.lifetrackspring.database.model.data
+package org.lifetrack.lifetrackspring.database.model.dto
 
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
@@ -25,10 +25,8 @@ data class UserDataRequest(
     val phoneNumber: Number?,
     val accessToken: String? = null
 )
-data class UserDataResponse(
-//    val id: ObjectId,
-    val createdAt: Instant?
-)
+
+data class UserDataResponse(val createdAt: Instant?)
 
 data class LoginAuthRequest(
     @field:NotEmpty(message = "Email Address can't be empty")
@@ -40,29 +38,6 @@ data class LoginAuthRequest(
     @field:NotEmpty(message = "Password can't be empty")
     @field:NotNull(message = "Password can't be null")
     val password: String
-)
-
-data class VitalsRequest(
-    val resId: String? = null,
-    @field:NotNull
-    @field:NotBlank
-    val accessToken: String,
-    val vitalsData: VitalsDataRequest? = null
-)
-data class VitalsDataRequest(
-    val pulse: Double? = null,
-    val bloodPressure: Double? = null,
-    val bodyTemperature: Double? = null,
-    val respiratoryRate: Double? = null,
-    val oxygenSaturation: Double? = null,
-    val lastRecordAt: Instant = Instant.now()
-)
-data class VitalsResponse(
-    val pulse: Double?,
-    val bloodPressure: Double? = null,
-    val bodyTemperature: Double? = null,
-    val respiratoryRate: Double? = null,
-    val oxygenSaturation: Double? = null
 )
 
 data class InsuranceRequest(
@@ -87,35 +62,7 @@ data class BRequest(
     val accessToken: String,
     val userId: String,
 )
-data class BillingPRequest(
-    val accessToken: String,
-    val userId: String,
-    val data: Billing
-)
-data class BillingResponse(
-    val billingInfo: MutableList<Billing>
-)
 
-data class MedicalResponse(
-    val allergies: MutableList<String> = mutableListOf(),
-    val chronicConditions: MutableList<ChronicCondition> = mutableListOf(),
-    val pastSurgeries: MutableList<PastSurgery> = mutableListOf(),
-    val familyHistory: MutableList<FamilyHistory> = mutableListOf(),
-    val updatedAt: Instant,
-    val visits: MutableList<Visit> = mutableListOf()
-)
-data class MedicalPRequest(
-    val ownerId: String,
-    val allergies: MutableList<String> = mutableListOf(),
-    val chronicConditions: MutableList<ChronicCondition> = mutableListOf(),
-    val pastSurgeries: MutableList<PastSurgery> = mutableListOf(),
-    val familyHistory: MutableList<FamilyHistory> = mutableListOf(),
-)
 
-data class PrescriptionUpdate(
-    val drugName: String,
-    val dosage: String,
-    val frequency: String,
-    val duration: String? = null,
-    val notes: String? = null
-)
+
+

@@ -3,7 +3,7 @@ package org.lifetrack.lifetrackspring.controller
 import org.apache.coyote.BadRequestException
 import org.bson.types.ObjectId
 import org.lifetrack.lifetrackspring.database.model.data.Insurance
-import org.lifetrack.lifetrackspring.database.model.data.InsuranceRequest
+import org.lifetrack.lifetrackspring.database.model.dto.InsuranceRequest
 import org.lifetrack.lifetrackspring.services.InsuranceService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*

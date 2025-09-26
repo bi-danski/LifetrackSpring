@@ -1,7 +1,11 @@
 package org.lifetrack.lifetrackspring.controller
 
 import org.bson.types.ObjectId
-import org.lifetrack.lifetrackspring.database.model.data.*
+import org.lifetrack.lifetrackspring.database.model.data.Billing
+import org.lifetrack.lifetrackspring.database.model.data.Billings
+import org.lifetrack.lifetrackspring.database.model.dto.BRequest
+import org.lifetrack.lifetrackspring.database.model.dto.BillingPRequest
+import org.lifetrack.lifetrackspring.database.model.dto.BillingResponse
 import org.lifetrack.lifetrackspring.services.BillingService
 import org.lifetrack.lifetrackspring.utils.toBillingsResponse
 import org.springframework.http.HttpStatus
@@ -14,7 +18,7 @@ class BillingController(
     private val billingService: BillingService,
 ) {
     @GetMapping
-    fun getUserBillings(@RequestBody body: BRequest): BillingResponse{
+    fun getUserBillings(@RequestBody body: BRequest): BillingResponse {
         if (body.accessToken.isEmpty() && body.userId.isEmpty()){
             throw IllegalArgumentException(HttpStatus.BAD_REQUEST.toString())
         }

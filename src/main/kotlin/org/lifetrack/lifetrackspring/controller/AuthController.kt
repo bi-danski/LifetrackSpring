@@ -1,10 +1,10 @@
 package org.lifetrack.lifetrackspring.controller
 
-import org.lifetrack.lifetrackspring.database.model.data.LoginAuthRequest
 import org.lifetrack.lifetrackspring.database.model.data.RefreshRequest
 import org.lifetrack.lifetrackspring.database.model.data.TokenPair
-import org.lifetrack.lifetrackspring.database.model.data.UserDataRequest
-import org.lifetrack.lifetrackspring.database.model.data.UserDataResponse
+import org.lifetrack.lifetrackspring.database.model.dto.LoginAuthRequest
+import org.lifetrack.lifetrackspring.database.model.dto.UserDataRequest
+import org.lifetrack.lifetrackspring.database.model.dto.UserDataResponse
 import org.lifetrack.lifetrackspring.services.AuthService
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody

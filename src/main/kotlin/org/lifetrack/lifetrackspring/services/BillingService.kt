@@ -7,7 +7,7 @@ import com.mongodb.MongoWriteException
 import org.bson.types.ObjectId
 import org.lifetrack.lifetrackspring.database.model.data.Billing
 import org.lifetrack.lifetrackspring.database.model.data.Billings
-import org.lifetrack.lifetrackspring.database.model.delegate.BillingsDelegate
+import org.lifetrack.lifetrackspring.database.delegate.BillingsDelegate
 import org.lifetrack.lifetrackspring.database.repository.BillingRepository
 import org.lifetrack.lifetrackspring.utils.ValidationUtil
 import org.springframework.beans.factory.annotation.Qualifier

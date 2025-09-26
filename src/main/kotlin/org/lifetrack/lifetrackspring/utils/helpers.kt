@@ -1,8 +1,11 @@
 package org.lifetrack.lifetrackspring.utils
 
 import org.lifetrack.lifetrackspring.database.model.data.*
+import org.lifetrack.lifetrackspring.database.model.dto.BillingResponse
+import org.lifetrack.lifetrackspring.database.model.dto.UserDataRequest
+import org.lifetrack.lifetrackspring.database.model.dto.UserDataResponse
 
-fun User.toRequest(): UserDataRequest{
+fun User.toRequest(): UserDataRequest {
     return UserDataRequest(
         userName = this.userName, emailAddress = this.emailAddress,
         password = this.passwordHash, phoneNumber = this.phoneNumber,
@@ -10,17 +13,18 @@ fun User.toRequest(): UserDataRequest{
     )
 }
 
-fun User.toResponse(): UserDataResponse{
+fun User.toResponse(): UserDataResponse {
     return UserDataResponse(
 //        id = id,
-        this.createdAt )
+        this.createdAt
+    )
 }
 
 fun UserVitals.toVitalsResponse(): VitalsResponse{
     return VitalsResponse(this.pulse, this.bloodPressure, this.bodyTemperature, this.respiratoryRate, this.oxygenSaturation)
 }
 
-fun Billings.toBillingsResponse(): BillingResponse{
+fun Billings.toBillingsResponse(): BillingResponse {
     return BillingResponse(this.billingInfo)
 }
 

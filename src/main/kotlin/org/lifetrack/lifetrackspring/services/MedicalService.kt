@@ -3,9 +3,9 @@ package org.lifetrack.lifetrackspring.services
 import com.mongodb.MongoException
 import com.mongodb.MongoWriteException
 import org.bson.types.ObjectId
+import org.lifetrack.lifetrackspring.database.delegate.MedicalDelegate
 import org.lifetrack.lifetrackspring.database.model.data.MedicalHistory
-import org.lifetrack.lifetrackspring.database.model.data.MedicalPRequest
-import org.lifetrack.lifetrackspring.database.model.delegate.MedicalDelegate
+import org.lifetrack.lifetrackspring.database.model.dto.MedicalPRequest
 import org.lifetrack.lifetrackspring.database.repository.MedicalRepository
 import org.lifetrack.lifetrackspring.exception.ResourceNotFound
 import org.lifetrack.lifetrackspring.utils.ValidationUtil

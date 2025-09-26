@@ -2,8 +2,12 @@ package org.lifetrack.lifetrackspring.controller
 
 import org.apache.coyote.BadRequestException
 import org.bson.types.ObjectId
-import org.lifetrack.lifetrackspring.database.model.data.*
+import org.lifetrack.lifetrackspring.database.model.data.MedicalHistory
+import org.lifetrack.lifetrackspring.database.model.dto.BRequest
+import org.lifetrack.lifetrackspring.database.model.dto.MedicalPRequest
+import org.lifetrack.lifetrackspring.database.model.dto.MedicalResponse
 import org.lifetrack.lifetrackspring.services.MedicalService
+import org.lifetrack.lifetrackspring.services.VisitService
 import org.lifetrack.lifetrackspring.utils.toMedicalResponse
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -12,7 +16,8 @@ import java.time.Instant
 @RestController
 @RequestMapping("/user/medical/")
 class MedicalController(
-    private val medicalService: MedicalService
+    private val medicalService: MedicalService,
+    private val visitService: VisitService
 ) {
     @GetMapping
     fun getUserMedicalHistory(@RequestBody body: BRequest): MedicalResponse{
@@ -23,23 +28,23 @@ class MedicalController(
             .toMedicalResponse()
     }
 
-    @GetMapping("/lab")
-    fun getUserMedicalLabTestResults(@RequestBody body: BRequest): MutableList<LabResult>{
-        val allRecords = medicalService.retrieveMedicalHistory(ObjectId(body.userId), body.accessToken)
-        return medicalService.extractLabResults(allRecords, )
-    }
+//    @GetMapping("/lab")
+//    fun getUserMedicalLabTestResults(@RequestBody body: BRequest): MutableList<LabResult>{
+//        val allRecords = medicalService.retrieveMedicalHistory(ObjectId(body.userId), body.accessToken)
+//        return medicalService.extractLabResults(allRecords )
+//    }
 
-    @GetMapping("/prescriptions")
-    fun getUserMedicalPrescriptions( @RequestBody body: BRequest): MutableList<Prescription>{
-        val allPrescriptions = medicalService.retrieveMedicalHistory(ObjectId(body.userId), body.accessToken)
-        return medicalService.extractPrescriptions(allPrescriptions)
-    }
-
-    @GetMapping("/diagnosis")
-    fun getUserMedicalDiagnosis(@RequestBody body: BRequest): MutableList<Diagnosis>{
-        val allDiagnosis = medicalService.retrieveMedicalHistory(ObjectId(body.userId), body.accessToken)
-        return medicalService.extractDiagnosis(allDiagnosis)
-    }
+//    @GetMapping("/prescriptions")
+//    fun getUserMedicalPrescriptions( @RequestBody body: BRequest): MutableList<Prescription>{
+//        val allPrescriptions = medicalService.retrieveMedicalHistory(ObjectId(body.userId), body.accessToken)
+//        return visitService.extractPrescriptions(allPrescriptions)
+//    }
+//
+//    @GetMapping("/diagnosis")
+//    fun getUserMedicalDiagnosis(@RequestBody body: BRequest): MutableList<Diagnosis>{
+//        val allDiagnosis = medicalService.retrieveMedicalHistory(ObjectId(body.userId), body.accessToken)
+//        return medicalService.extractDiagnosis(allDiagnosis)
+//    }
 
 
     @PostMapping
@@ -55,7 +60,6 @@ class MedicalController(
             pastSurgeries = body.pastSurgeries,
             familyHistory = body.familyHistory,
             updatedAt = Instant.now(),
-            visits = body.visits
         )
         return medicalService.createMedicalHistory(userMedicalHistory.ownerId, userMedicalHistory, accessToken)
     }

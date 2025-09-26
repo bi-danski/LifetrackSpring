@@ -2,6 +2,9 @@ package org.lifetrack.lifetrackspring.services
 
 import org.bson.types.ObjectId
 import org.lifetrack.lifetrackspring.database.model.data.*
+import org.lifetrack.lifetrackspring.database.model.dto.LoginAuthRequest
+import org.lifetrack.lifetrackspring.database.model.dto.UserDataRequest
+import org.lifetrack.lifetrackspring.database.model.dto.UserDataResponse
 import org.lifetrack.lifetrackspring.database.repository.TokenRepository
 import org.lifetrack.lifetrackspring.database.repository.UserRepository
 import org.lifetrack.lifetrackspring.security.HashEncoder
