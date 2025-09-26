@@ -1,25 +1,11 @@
-package org.lifetrack.lifetrackspring.utils
+package org.lifetrack.lifetrackspring.utils.helpers
 
 import org.lifetrack.lifetrackspring.database.model.data.Billings
 import org.lifetrack.lifetrackspring.database.model.data.MedicalHistory
-import org.lifetrack.lifetrackspring.database.model.data.User
 import org.lifetrack.lifetrackspring.database.model.data.UserVitals
 import org.lifetrack.lifetrackspring.database.model.dto.*
 
-fun User.toRequest(): UserDataRequest {
-    return UserDataRequest(
-        userName = this.userName, emailAddress = this.emailAddress,
-        password = this.passwordHash, phoneNumber = this.phoneNumber,
-        fullName = this.fullName, id = this.id.toString()
-    )
-}
 
-fun User.toResponse(): UserDataResponse {
-    return UserDataResponse(
-//        id = id,
-        this.createdAt
-    )
-}
 
 fun UserVitals.toVitalsResponse(): VitalsResponse {
     return VitalsResponse(this.pulse, this.bloodPressure, this.bodyTemperature, this.respiratoryRate, this.oxygenSaturation)
@@ -32,3 +18,6 @@ fun Billings.toBillingsResponse(): BillingResponse {
 fun MedicalHistory.toMedicalResponse(): MedicalResponse {
     return MedicalResponse(this.allergies, this.chronicConditions, this.pastSurgeries, this.familyHistory, this.updatedAt)
 }
+
+
+

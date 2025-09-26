@@ -1,9 +1,13 @@
 package org.lifetrack.lifetrackspring.services
 
 import org.bson.types.ObjectId
+import org.lifetrack.lifetrackspring.database.model.dto.UserDataResponse
 import org.lifetrack.lifetrackspring.database.repository.UserRepository
+import org.lifetrack.lifetrackspring.exception.ResourceNotFound
 import org.lifetrack.lifetrackspring.utils.ValidationUtil
+import org.lifetrack.lifetrackspring.utils.helpers.toResponse
 import org.springframework.http.HttpStatus
+import org.springframework.security.access.AccessDeniedException
 import org.springframework.stereotype.Service
 
 @Service
@@ -22,14 +26,14 @@ class UserService(
         return HttpStatus.OK
     }
 
-    fun findUserById(id: ObjectId, accessToken: String): HttpStatus{
+    fun retrieveUserDataById(id: ObjectId, accessToken: String): UserDataResponse{
         if(!validationUtil.validateRequestFromUser(id, accessToken = accessToken)){
-            return HttpStatus.UNAUTHORIZED
+            throw AccessDeniedException (HttpStatus.UNAUTHORIZED.toString())
         }
         val response = userRepository.findById(id)
         if(response.isEmpty ){
-            return HttpStatus.NOT_FOUND
+            throw ResourceNotFound(HttpStatus.NOT_FOUND.toString())
         }
-        return HttpStatus.FOUND
+        return response.get().toResponse()
     }
 }

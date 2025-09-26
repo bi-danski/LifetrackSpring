@@ -3,8 +3,8 @@ package org.lifetrack.lifetrackspring.controller
 import org.lifetrack.lifetrackspring.database.model.data.RefreshRequest
 import org.lifetrack.lifetrackspring.database.model.data.TokenPair
 import org.lifetrack.lifetrackspring.database.model.dto.LoginAuthRequest
-import org.lifetrack.lifetrackspring.database.model.dto.UserDataRequest
 import org.lifetrack.lifetrackspring.database.model.dto.UserDataResponse
+import org.lifetrack.lifetrackspring.database.model.dto.UserSignUpRequest
 import org.lifetrack.lifetrackspring.services.AuthService
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -18,7 +18,7 @@ class AuthController(
     private val authService: AuthService
 ) {
     @PostMapping("/register")
-    fun register(@RequestBody body: UserDataRequest): UserDataResponse {
+    fun register(@RequestBody body: UserSignUpRequest): UserDataResponse {
         return authService.registerUser(bodyParams = body)
     }
 

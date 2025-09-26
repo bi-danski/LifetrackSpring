@@ -10,4 +10,7 @@ interface VisitDelegate {
     fun extractLabResults(visits: MutableList<Visit>): MutableList<LabResult>
     fun extractDiagnosis(visits: MutableList<Visit>): MutableList<Diagnosis>
 
+//    fun appendPrescription(prescription: PrescriptionUpdate)
+//    fun appendLabResult()
+//    fun appendDiagnosis()
 }

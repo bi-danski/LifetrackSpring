@@ -6,4 +6,5 @@ import org.springframework.data.mongodb.repository.MongoRepository
 
 interface VisitRepository: MongoRepository<Visit, ObjectId> {
     fun findVisitByOwnerId(ownerId: ObjectId): Visit
+    fun existsVisitsByOwnerId(ownerId: ObjectId): Boolean
 }

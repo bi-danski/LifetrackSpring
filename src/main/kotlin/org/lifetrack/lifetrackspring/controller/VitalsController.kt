@@ -5,9 +5,8 @@ import org.lifetrack.lifetrackspring.database.model.data.UserVitals
 import org.lifetrack.lifetrackspring.database.model.dto.VitalsRequest
 import org.lifetrack.lifetrackspring.database.model.dto.VitalsResponse
 import org.lifetrack.lifetrackspring.services.JwtService
-import org.lifetrack.lifetrackspring.services.UserService
 import org.lifetrack.lifetrackspring.services.VitalService
-import org.lifetrack.lifetrackspring.utils.toVitalsResponse
+import org.lifetrack.lifetrackspring.utils.helpers.toVitalsResponse
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import java.time.Instant
@@ -17,7 +16,6 @@ import java.time.Instant
 class VitalsController(
     private val vitalService: VitalService,
     private val jwtService: JwtService,
-    private val userService: UserService,
 ) {
     @GetMapping
     fun getUserVitals(@RequestParam userId:String, @RequestBody vBody: VitalsRequest): VitalsResponse{
@@ -34,10 +32,6 @@ class VitalsController(
             return HttpStatus.BAD_REQUEST
         }
         val userId = jwtService.parseUserIdFromToken(vBody.accessToken)
-        val response = userService.findUserById(ObjectId(userId), accessToken = vBody.accessToken)
-        if (response.compareTo(HttpStatus.FOUND) != 0 && userId.isEmpty()){
-            return HttpStatus.BAD_REQUEST
-        }
         vitalService.storeVitals(
             UserVitals(
                 id = ObjectId(userId),
@@ -67,13 +61,7 @@ class VitalsController(
         if (nwVitalBody.vitalsData == null && nwVitalBody.accessToken.isEmpty() ) {
             return HttpStatus.BAD_REQUEST
         }
-        if(!jwtService.validateAccessToken(nwVitalBody.accessToken)) {
-            return HttpStatus.UNAUTHORIZED
-        }
         val userId = jwtService.parseUserIdFromToken(nwVitalBody.accessToken)
-        if (userService.findUserById(ObjectId(userId), accessToken = nwVitalBody.accessToken).compareTo(HttpStatus.FOUND) != 0 && userId.isEmpty()){
-            return HttpStatus.BAD_REQUEST
-        }
         vitalService.amendVitals(
             UserVitals( id = ObjectId(userId),
                 pulse = nwVitalBody.vitalsData?.pulse,

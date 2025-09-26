@@ -1,15 +1,17 @@
 package org.lifetrack.lifetrackspring.services
 
 import org.bson.types.ObjectId
-import org.lifetrack.lifetrackspring.database.model.data.*
+import org.lifetrack.lifetrackspring.database.model.data.RefreshToken
+import org.lifetrack.lifetrackspring.database.model.data.TokenPair
+import org.lifetrack.lifetrackspring.database.model.data.User
 import org.lifetrack.lifetrackspring.database.model.dto.LoginAuthRequest
-import org.lifetrack.lifetrackspring.database.model.dto.UserDataRequest
 import org.lifetrack.lifetrackspring.database.model.dto.UserDataResponse
+import org.lifetrack.lifetrackspring.database.model.dto.UserSignUpRequest
 import org.lifetrack.lifetrackspring.database.repository.TokenRepository
 import org.lifetrack.lifetrackspring.database.repository.UserRepository
 import org.lifetrack.lifetrackspring.security.HashEncoder
 import org.lifetrack.lifetrackspring.security.TokenEncoder
-import org.lifetrack.lifetrackspring.utils.toResponse
+import org.lifetrack.lifetrackspring.utils.helpers.toResponse
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
@@ -43,10 +45,10 @@ class AuthService(
         }
     }
 
-    fun registerUser(bodyParams: UserDataRequest): UserDataResponse {
+    fun registerUser(bodyParams: UserSignUpRequest): UserDataResponse {
         val pwHash = hashEncoder.hashPasswd(bodyParams.password)
         val user = User(
-            id = bodyParams.id?.let { ObjectId(it) } ?: ObjectId.get(),
+            id = ObjectId.get(),
             fullName = bodyParams.fullName,
             userName = bodyParams.userName,
             emailAddress = bodyParams.emailAddress,

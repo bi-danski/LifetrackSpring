@@ -71,10 +71,10 @@ data class Visit(
     val prescriptions: MutableList<Prescription> = mutableListOf(),
     val labResults: MutableList<LabResult> = mutableListOf()
 )
+
 data class Prescription(
     val id: ObjectId = ObjectId.get(),
-    val visitIdRef: ObjectId,
-    val ownerIdRef: ObjectId,
+    val visitId: ObjectId,
     val drugName: String,
     val dosage: String,
     val frequency: String,
@@ -88,7 +88,7 @@ data class LabResult(
     val ownerId: ObjectId,
     val testName: String,
     val result: String,
-    val normalRange: String? = null,
+    val normalRange: String,
     val date: LocalDate,
     val notes: String? = null,
     val testedAt: Instant
@@ -98,9 +98,9 @@ data class Diagnosis(
     val visitId: ObjectId,
     val ownerId: ObjectId,
     val condition: String,
-    val description: String? = null,
-    val severity: String? = null,
-    val status: String? = null,
+    val description: String,
+    val severity: String,
+    val status: String,
     val codedValue: String? = null,
     val diagnosedAt: Instant,
     val updatedAt: Instant

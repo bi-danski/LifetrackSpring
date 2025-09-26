@@ -8,7 +8,7 @@ import org.lifetrack.lifetrackspring.database.model.dto.MedicalPRequest
 import org.lifetrack.lifetrackspring.database.model.dto.MedicalResponse
 import org.lifetrack.lifetrackspring.services.MedicalService
 import org.lifetrack.lifetrackspring.services.VisitService
-import org.lifetrack.lifetrackspring.utils.toMedicalResponse
+import org.lifetrack.lifetrackspring.utils.helpers.toMedicalResponse
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import java.time.Instant
