@@ -11,7 +11,7 @@ import org.lifetrack.lifetrackspring.database.repository.TokenRepository
 import org.lifetrack.lifetrackspring.database.repository.UserRepository
 import org.lifetrack.lifetrackspring.security.HashEncoder
 import org.lifetrack.lifetrackspring.security.TokenEncoder
-import org.lifetrack.lifetrackspring.utils.helpers.toResponse
+import org.lifetrack.lifetrackspring.database.model.helpers.toResponse
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant

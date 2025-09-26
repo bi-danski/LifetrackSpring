@@ -5,7 +5,7 @@ import org.lifetrack.lifetrackspring.database.model.dto.UserDataResponse
 import org.lifetrack.lifetrackspring.database.repository.UserRepository
 import org.lifetrack.lifetrackspring.exception.ResourceNotFound
 import org.lifetrack.lifetrackspring.utils.ValidationUtil
-import org.lifetrack.lifetrackspring.utils.helpers.toResponse
+import org.lifetrack.lifetrackspring.database.model.helpers.toResponse
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.stereotype.Service

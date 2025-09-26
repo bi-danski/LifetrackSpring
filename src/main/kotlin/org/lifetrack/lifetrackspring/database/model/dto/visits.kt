@@ -38,3 +38,35 @@ data class VisitUpdate(
     val prescriptions: MutableList<PrescriptionUpdate> = mutableListOf(),
     val labResults: MutableList<LabResultUpdate> = mutableListOf()
 )
+data class UserVisitUpdate(
+    val date: LocalDate,
+    val department: String,
+    val doctor: String,
+    val reasonForVisit: String,
+    val notes: String? = null,
+    val visitAt: Instant
+)
+
+data class UserPrescriptionRequest(
+    val prescriptionId: String,
+    val visitId: String,
+    val userId: String,
+    val accessToken: String,
+    val prescriptionUpdate: PrescriptionUpdate,
+)
+
+data class UserLabRequest(
+    val prescriptionId: String,
+    val visitId: String,
+    val userId: String,
+    val accessToken: String,
+    val labResultUpdate: LabResultUpdate
+)
+
+data class UserDiagnosisRequest(
+    val prescriptionId: String,
+    val visitId: String,
+    val userId: String,
+    val accessToken: String,
+    val diagnosisUpdate: DiagnosisUpdate
+)

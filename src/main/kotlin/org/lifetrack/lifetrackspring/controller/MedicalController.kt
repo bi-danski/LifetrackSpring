@@ -6,9 +6,9 @@ import org.lifetrack.lifetrackspring.database.model.data.MedicalHistory
 import org.lifetrack.lifetrackspring.database.model.dto.BRequest
 import org.lifetrack.lifetrackspring.database.model.dto.MedicalPRequest
 import org.lifetrack.lifetrackspring.database.model.dto.MedicalResponse
+import org.lifetrack.lifetrackspring.database.model.helpers.toMedicalResponse
 import org.lifetrack.lifetrackspring.services.MedicalService
 import org.lifetrack.lifetrackspring.services.VisitService
-import org.lifetrack.lifetrackspring.utils.helpers.toMedicalResponse
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import java.time.Instant
@@ -28,23 +28,23 @@ class MedicalController(
             .toMedicalResponse()
     }
 
-//    @GetMapping("/lab")
-//    fun getUserMedicalLabTestResults(@RequestBody body: BRequest): MutableList<LabResult>{
+    @GetMapping("/lab")
+    fun getUserMedicalLabTestResults(){
 //        val allRecords = medicalService.retrieveMedicalHistory(ObjectId(body.userId), body.accessToken)
 //        return medicalService.extractLabResults(allRecords )
-//    }
+    }
 
-//    @GetMapping("/prescriptions")
-//    fun getUserMedicalPrescriptions( @RequestBody body: BRequest): MutableList<Prescription>{
+    @GetMapping("/prescriptions")
+    fun getUserMedicalPrescriptions( ){
 //        val allPrescriptions = medicalService.retrieveMedicalHistory(ObjectId(body.userId), body.accessToken)
 //        return visitService.extractPrescriptions(allPrescriptions)
-//    }
+    }
 //
-//    @GetMapping("/diagnosis")
-//    fun getUserMedicalDiagnosis(@RequestBody body: BRequest): MutableList<Diagnosis>{
+    @GetMapping("/diagnosis")
+    fun getUserMedicalDiagnosis(){
 //        val allDiagnosis = medicalService.retrieveMedicalHistory(ObjectId(body.userId), body.accessToken)
 //        return medicalService.extractDiagnosis(allDiagnosis)
-//    }
+    }
 
 
     @PostMapping

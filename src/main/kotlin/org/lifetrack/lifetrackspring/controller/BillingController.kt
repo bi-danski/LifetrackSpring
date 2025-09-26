@@ -7,7 +7,7 @@ import org.lifetrack.lifetrackspring.database.model.dto.BRequest
 import org.lifetrack.lifetrackspring.database.model.dto.BillingPRequest
 import org.lifetrack.lifetrackspring.database.model.dto.BillingResponse
 import org.lifetrack.lifetrackspring.services.BillingService
-import org.lifetrack.lifetrackspring.utils.helpers.toBillingsResponse
+import org.lifetrack.lifetrackspring.database.model.helpers.toBillingsResponse
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import java.time.Instant

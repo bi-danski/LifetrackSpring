@@ -6,7 +6,7 @@ import org.lifetrack.lifetrackspring.database.model.dto.VitalsRequest
 import org.lifetrack.lifetrackspring.database.model.dto.VitalsResponse
 import org.lifetrack.lifetrackspring.services.JwtService
 import org.lifetrack.lifetrackspring.services.VitalService
-import org.lifetrack.lifetrackspring.utils.helpers.toVitalsResponse
+import org.lifetrack.lifetrackspring.database.model.helpers.toVitalsResponse
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import java.time.Instant

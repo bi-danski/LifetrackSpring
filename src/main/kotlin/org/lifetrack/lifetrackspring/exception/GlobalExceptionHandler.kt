@@ -1,5 +1,5 @@
+package org.lifetrack.lifetrackspring.exception
 
-import org.lifetrack.lifetrackspring.exception.ResourceNotFound
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -16,12 +16,12 @@ class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception::class)
-    fun handleGeneral(ex: Exception): ResponseEntity<Map<String, Any>> {
+    fun handleGeneral(ex: Exception): ResponseEntity<Map<String, String>> {
         return ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(mapOf("error" to ex.localizedMessage,
                 "details" to "Server can't do that! Try again next time",
-//                "metro" to ex.stackTraceToString()
+                "metro" to ex.stackTraceToString()
                 )
             )
     }
