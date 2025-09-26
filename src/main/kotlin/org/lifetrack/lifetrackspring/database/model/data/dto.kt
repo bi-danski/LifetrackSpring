@@ -110,7 +110,6 @@ data class MedicalPRequest(
     val chronicConditions: MutableList<ChronicCondition> = mutableListOf(),
     val pastSurgeries: MutableList<PastSurgery> = mutableListOf(),
     val familyHistory: MutableList<FamilyHistory> = mutableListOf(),
-    val visits: MutableList<Visit> = mutableListOf()
 )
 
 data class PrescriptionUpdate(

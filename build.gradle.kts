@@ -7,7 +7,7 @@ plugins {
 
 group = "org.lifetrack"
 version = "0.0.1-SNAPSHOT"
-description = "LifeTrack Backend with Spring Boot"
+description = "LifeTrack Backend Logic with Spring Boot"
 
 java {
 	toolchain {

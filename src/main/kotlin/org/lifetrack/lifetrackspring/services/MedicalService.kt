@@ -69,7 +69,7 @@ class MedicalService(
             chronicConditions = medicalRequest.chronicConditions.ifEmpty { existingEntity.chronicConditions },
             pastSurgeries = medicalRequest.pastSurgeries.ifEmpty { existingEntity.pastSurgeries },
             familyHistory = medicalRequest.familyHistory.ifEmpty { existingEntity.familyHistory },
-            visits = medicalRequest.visits.ifEmpty { existingEntity.visits },
+//            visits = medicalRequest.visits.ifEmpty { existingEntity.visits },
             updatedAt = java.time.Instant.now()
         )
         return try {
