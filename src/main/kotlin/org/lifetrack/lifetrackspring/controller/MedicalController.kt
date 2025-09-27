@@ -3,9 +3,7 @@ package org.lifetrack.lifetrackspring.controller
 import org.apache.coyote.BadRequestException
 import org.bson.types.ObjectId
 import org.lifetrack.lifetrackspring.database.model.data.MedicalHistory
-import org.lifetrack.lifetrackspring.database.model.dto.BRequest
-import org.lifetrack.lifetrackspring.database.model.dto.MedicalPRequest
-import org.lifetrack.lifetrackspring.database.model.dto.MedicalResponse
+import org.lifetrack.lifetrackspring.database.model.dto.*
 import org.lifetrack.lifetrackspring.database.model.helpers.toMedicalResponse
 import org.lifetrack.lifetrackspring.services.MedicalService
 import org.lifetrack.lifetrackspring.services.VisitService
@@ -29,23 +27,23 @@ class MedicalController(
     }
 
     @GetMapping("/lab")
-    fun getUserMedicalLabTestResults(){
-//        val allRecords = medicalService.retrieveMedicalHistory(ObjectId(body.userId), body.accessToken)
-//        return medicalService.extractLabResults(allRecords )
+    fun getUserMedicalLabTestResults(@RequestBody body: BRequest): MutableList<LabResultUpdate>{
+        val allResults = visitService.retrieveVisits(ObjectId(body.userId), body.accessToken)
+        return visitService.extractAllLabResults(allResults)
     }
 
     @GetMapping("/prescriptions")
-    fun getUserMedicalPrescriptions( ){
-//        val allPrescriptions = medicalService.retrieveMedicalHistory(ObjectId(body.userId), body.accessToken)
-//        return visitService.extractPrescriptions(allPrescriptions)
+    fun getUserMedicalPrescriptions(@RequestBody body: BRequest ): MutableList<PrescriptionUpdate>{
+        val userVisits = visitService.retrieveVisits(ObjectId(body.userId), body.accessToken)
+        return visitService.extractAllPrescriptions(userVisits)
     }
 //
     @GetMapping("/diagnosis")
-    fun getUserMedicalDiagnosis(){
-//        val allDiagnosis = medicalService.retrieveMedicalHistory(ObjectId(body.userId), body.accessToken)
-//        return medicalService.extractDiagnosis(allDiagnosis)
-    }
+    fun getUserMedicalDiagnosis(@RequestBody body: BRequest): MutableList<DiagnosisUpdate>{
+        val userVisits = visitService.retrieveVisits(ObjectId(body.userId), body.accessToken)
+        return visitService.extractAllDiagnosis(userVisits)
 
+    }
 
     @PostMapping
     fun initUserMedicalHistory(@RequestParam accessToken: String, @RequestBody body: MedicalPRequest): HttpStatus{
@@ -71,7 +69,6 @@ class MedicalController(
         }
         return medicalService.amendMedicalHistory(body, accessToken = accessToken)
     }
-
 
     @DeleteMapping
     fun deleteUserMedicalHistory( @RequestBody body: BRequest): HttpStatus{

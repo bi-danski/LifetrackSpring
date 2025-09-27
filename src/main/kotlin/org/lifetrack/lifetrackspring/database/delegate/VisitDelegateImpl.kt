@@ -3,17 +3,20 @@ package org.lifetrack.lifetrackspring.database.delegate
 import org.bson.types.ObjectId
 import org.lifetrack.lifetrackspring.database.model.data.*
 import org.lifetrack.lifetrackspring.database.model.dto.*
+import org.lifetrack.lifetrackspring.database.model.helpers.toDiagnosisUpdate
+import org.lifetrack.lifetrackspring.database.model.helpers.toLabResultUpdate
+import org.lifetrack.lifetrackspring.database.model.helpers.toPrescriptionUpdate
 import org.springframework.stereotype.Component
 import java.time.Instant
 
 @Component
 class VisitDelegateImpl : VisitDelegate {
 
-    override fun extractAllPrescriptions(visits: MutableList<Visit>): MutableList<Prescription> {
-        val allPrescription: MutableList<Prescription> = mutableListOf()
-        visits.forEach {
+    override fun extractAllPrescriptions(visits: UserVisits): MutableList<PrescriptionUpdate> {
+        val allPrescription: MutableList<PrescriptionUpdate> = mutableListOf()
+        visits.allVisits.forEach {
             it.prescriptions.forEach { prescription ->
-                allPrescription.add(prescription)
+                allPrescription.add(prescription.toPrescriptionUpdate())
             }
         }
         return allPrescription
@@ -64,9 +67,9 @@ class VisitDelegateImpl : VisitDelegate {
         visits.allVisits.first { it.id == visitId }.prescriptions.removeIf { prescription -> prescriptionId == prescription.id }
     }
 
-    override fun extractAllLabResults(visits: UserVisits): MutableList<LabResult> {
-        val allLabResults: MutableList<LabResult> = mutableListOf()
-        visits.allVisits.forEach { it.labResults.forEach { labResult -> allLabResults.add(labResult) } }
+    override fun extractAllLabResults(visits: UserVisits): MutableList<LabResultUpdate> {
+        val allLabResults: MutableList<LabResultUpdate> = mutableListOf()
+        visits.allVisits.forEach { it.labResults.forEach { labResult -> allLabResults.add(labResult.toLabResultUpdate()) } }
         return allLabResults
     }
 
@@ -116,10 +119,10 @@ class VisitDelegateImpl : VisitDelegate {
         visits.allVisits.first { it.id == visitId }.labResults.removeIf { it.id == labResultId }
     }
 
-    override fun extractAllDiagnosis(visits: UserVisits): MutableList<Diagnosis> {
-        val allDiagnosis: MutableList<Diagnosis> = mutableListOf()
-        visits.allVisits.forEach { it.diagnosis.forEach { diagnosis -> allDiagnosis.add(diagnosis) } }
-        return allDiagnosis
+    override fun extractAllDiagnosis(visits: UserVisits): MutableList<DiagnosisUpdate> {
+        val allDiagnosisUpdates: MutableList<DiagnosisUpdate> = mutableListOf()
+        visits.allVisits.forEach { it.diagnosis.forEach { diagnosis -> allDiagnosisUpdates.add(diagnosis.toDiagnosisUpdate()) } }
+        return allDiagnosisUpdates
     }
 
     override fun insertDiagnosis(
