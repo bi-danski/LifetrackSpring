@@ -76,8 +76,14 @@ data class UserDiagnosisRequest(
     val diagnosisUpdate: DiagnosisUpdate
 )
 
-data class CommonRequest(
+data class CRequest(
     val id: String,
     val accessToken: String,
     val userId: String
+)
+
+data class VRequest(
+    val visitId: String,
+    val userId: String,
+    val accessToken: String
 )

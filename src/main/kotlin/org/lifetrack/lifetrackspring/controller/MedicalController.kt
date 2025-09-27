@@ -60,9 +60,7 @@ class MedicalController(
         return medicalService.eraseMedicalHistory(ObjectId(body.userId), body.accessToken)
     }
 
-
     // Medical LabTest
-
 
     @GetMapping("/lab")
     fun getUserMedicalLabTestResults(@RequestBody body: BRequest): MutableList<LabResultUpdate>{
@@ -86,14 +84,19 @@ class MedicalController(
     }
 
     @DeleteMapping(path=["/{id}"])
-    fun deleteUserMedicalLabResult(@PathVariable id: String, body: BRequest): HttpStatus{
-        // ToDo
-        return HttpStatus.SERVICE_UNAVAILABLE
+    fun deleteUserMedicalLabResult(@PathVariable id: String, body: VRequest): HttpStatus{
+        if (body.userId.isEmpty() && body.accessToken.isEmpty() && body.visitId.isEmpty()){
+            return HttpStatus.BAD_REQUEST
+        }
+        return visitService.eraseVisitLabResults(
+            ObjectId(body.visitId),
+            ObjectId(id),
+            ObjectId(body.userId),
+            accessToken = body.accessToken
+        )
     }
 
-
     // Medical Prescriptions
-
 
     @GetMapping("/prescriptions")
     fun getUserMedicalPrescription(@RequestBody body: BRequest ): MutableList<PrescriptionUpdate>{
@@ -110,14 +113,19 @@ class MedicalController(
     }
 
     @DeleteMapping(path=["/prescriptions/{id}"])
-    fun deleteUserMedicalPrescription(@PathVariable id: String, body: BRequest): HttpStatus{
-        // ToDo
-        return HttpStatus.SERVICE_UNAVAILABLE
+    fun deleteUserMedicalPrescription(@PathVariable id: String, body: VRequest): HttpStatus{
+        if (body.userId.isEmpty() && body.accessToken.isEmpty() && body.visitId.isEmpty()){
+            return HttpStatus.BAD_REQUEST
+        }
+        return visitService.eraseVisitPrescription(
+            ObjectId(body.visitId),
+            ObjectId(id),
+            ObjectId(body.userId),
+            accessToken = body.accessToken
+        )
     }
 
-
     // Medical Diagnosis
-
 
     @GetMapping("/diagnosis")
     fun getUserMedicalDiagnosis(@RequestBody body: BRequest): MutableList<DiagnosisUpdate>{
@@ -141,14 +149,19 @@ class MedicalController(
     }
 
     @DeleteMapping(path=["/diagnosis/{id}"])
-    fun deleteUserMedicalDiagnosis(@PathVariable id: String, body: BRequest): HttpStatus{
-        // ToDo
-        return HttpStatus.SERVICE_UNAVAILABLE
+    fun deleteUserMedicalDiagnosis(@PathVariable id: String, body: VRequest): HttpStatus{
+        if (body.userId.isEmpty() && body.accessToken.isEmpty() && body.visitId.isEmpty()){
+            return HttpStatus.BAD_REQUEST
+        }
+        return visitService.eraseVisitDiagnosis(
+            ObjectId(id),
+            ObjectId(body.visitId),
+            ObjectId(body.userId),
+            accessToken = body.accessToken
+            )
     }
 
-
     // Visits
-
 
     @PostMapping("/visit")
     fun initUserMedicalVisits(@RequestParam userId: String, accessToken: String, @RequestBody visitBody: VisitUpdate): HttpStatus{
@@ -180,7 +193,7 @@ class MedicalController(
     }
 
     @DeleteMapping("/visit")
-    fun deleteUserMedicalVisit(@RequestBody body: CommonRequest): HttpStatus{
+    fun deleteUserMedicalVisit(@RequestBody body: CRequest): HttpStatus{
         if (body.id.isEmpty() && body.accessToken.isEmpty() && body.userId.isEmpty()){
             return HttpStatus.UNAUTHORIZED
         }
@@ -189,6 +202,4 @@ class MedicalController(
             ObjectId(body.userId),
             body.accessToken )
     }
-
-
 }
