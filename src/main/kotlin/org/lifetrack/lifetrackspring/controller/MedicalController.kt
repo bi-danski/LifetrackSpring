@@ -147,7 +147,7 @@ class MedicalController(
     }
 
 
-    // Medical/FollowUp Visits
+    // Visits
 
 
     @PostMapping("/visit")
@@ -179,6 +179,16 @@ class MedicalController(
         }
     }
 
+    @DeleteMapping("/visit")
+    fun deleteUserMedicalVisit(@RequestBody body: CommonRequest): HttpStatus{
+        if (body.id.isEmpty() && body.accessToken.isEmpty() && body.userId.isEmpty()){
+            return HttpStatus.UNAUTHORIZED
+        }
+        return visitService.eraseVisit(
+             ObjectId(body.id),
+            ObjectId(body.userId),
+            body.accessToken )
+    }
 
 
 }

@@ -23,4 +23,5 @@ interface VisitDelegate {
 
     fun insertVisit(newVisit: VisitUpdate, userVisits: UserVisits)
     fun updateVisit(visitId: ObjectId ,update: UserVisitUpdate, userVisits: UserVisits)
+    fun removeVisit(visitId: ObjectId, userVisits: UserVisits)
 }

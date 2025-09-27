@@ -1,6 +1,7 @@
 package org.lifetrack.lifetrackspring.services
 
 import com.mongodb.MongoException
+import com.mongodb.MongoQueryException
 import com.mongodb.MongoWriteException
 import org.bson.types.ObjectId
 import org.lifetrack.lifetrackspring.database.delegate.VisitDelegate
@@ -32,6 +33,20 @@ class VisitService(
         return visitRepository.findUserVisitsByOwnerId(userId)
     }
 
+    fun eraseVisit(visitId: ObjectId, userId: ObjectId, accessToken: String ): HttpStatus{
+        if (!validationUtil.validateRequestFromUser(userId, accessToken)){
+            return HttpStatus.UNAUTHORIZED
+        }
+        return try {
+            val userVisits = retrieveVisits(userId, accessToken)
+            visitDelegate.removeVisit(visitId, userVisits)
+            visitRepository.save(userVisits)
+            HttpStatus.OK
+        }catch (_: MongoQueryException){
+            HttpStatus.INTERNAL_SERVER_ERROR
+        }
+    }
+
     fun createVisitsDocument(userId: ObjectId, accessToken: String, visitData: VisitUpdate): HttpStatus{
         if(!validationUtil.validateRequestFromUser(userId, accessToken)){
             return HttpStatus.UNAUTHORIZED
@@ -59,10 +74,10 @@ class VisitService(
         val userVisits = retrieveVisits(userId, accessToken)
         visitDelegate.updateVisit(visitId,userVisitData, userVisits)
 
-        if(!visitRepository.existsById(userVisits.id)){
-            return HttpStatus.NOT_FOUND
-        }
         return try {
+            if(!visitRepository.existsById(userVisits.id)){
+                return HttpStatus.NOT_FOUND
+            }
             visitRepository.save(userVisits)
             HttpStatus.OK
         }catch (_: MongoWriteException){
@@ -92,6 +107,22 @@ class VisitService(
         }
     }
 
+    fun eraseVisitPrescription(visitId: ObjectId, prescriptionId: ObjectId, userId: ObjectId, accessToken: String): HttpStatus{
+        if (!validationUtil.validateRequestFromUser(userId, accessToken)){
+            return HttpStatus.UNAUTHORIZED
+        }
+        return try {
+            val visits = retrieveVisits(userId, accessToken)
+            visitDelegate.removePrescription(prescriptionId, visitId, visits)
+            visitRepository.save(visits)
+            HttpStatus.OK
+        }catch (_: MongoException){
+            HttpStatus.INTERNAL_SERVER_ERROR
+        }catch (_: MongoWriteException){
+            HttpStatus.INTERNAL_SERVER_ERROR
+        }
+    }
+
     fun amendVisitLabResults(userRequest: UserLabRequest): HttpStatus {
         if (!validationUtil.validateRequestFromUser(ObjectId(userRequest.userId), userRequest.accessToken)) {
             return HttpStatus.UNAUTHORIZED
@@ -111,7 +142,23 @@ class VisitService(
         }
     }
 
-    fun amendVisitDiagnosis( userRequest: UserDiagnosisRequest): HttpStatus{
+    fun eraseVisitLabResults(visitId: ObjectId, resultId: ObjectId, userId: ObjectId, accessToken: String): HttpStatus{
+        if(!validationUtil.validateRequestFromUser(userId, accessToken)){
+            return HttpStatus.UNAUTHORIZED
+        }
+        return try{
+            val visits = retrieveVisits(userId, accessToken)
+            visitDelegate.removeLabResult(resultId, visitId, visits)
+            visitRepository.save(visits)
+            HttpStatus.OK
+        }catch (_: MongoWriteException){
+            HttpStatus.INTERNAL_SERVER_ERROR
+        }catch (_: MongoException){
+            HttpStatus.INTERNAL_SERVER_ERROR
+        }
+    }
+
+    fun amendVisitDiagnosis(userRequest: UserDiagnosisRequest): HttpStatus{
         if (!validationUtil.validateRequestFromUser(ObjectId(userRequest.userId), userRequest.accessToken)) {
             return HttpStatus.UNAUTHORIZED
         }
@@ -127,6 +174,22 @@ class VisitService(
             return HttpStatus.INTERNAL_SERVER_ERROR
         }catch (_: MongoException){
             return HttpStatus.INTERNAL_SERVER_ERROR
+        }
+    }
+
+    fun eraseVisitDiagnosis(visitId: ObjectId, diagnosisId: ObjectId, userId: ObjectId, accessToken: String): HttpStatus{
+        if(!validationUtil.validateRequestFromUser(userId, accessToken)){
+            return HttpStatus.UNAUTHORIZED
+        }
+        return try{
+            val visits = retrieveVisits(userId, accessToken)
+            visitDelegate.removeDiagnosis(diagnosisId, visitId = visitId, visits)
+            visitRepository.save(visits)
+            HttpStatus.OK
+        }catch (_: MongoException){
+            HttpStatus.INTERNAL_SERVER_ERROR
+        }catch (_: MongoWriteException){
+            HttpStatus.INTERNAL_SERVER_ERROR
         }
     }
 }

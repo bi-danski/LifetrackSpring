@@ -27,6 +27,7 @@ data class DiagnosisUpdate(
     val diagnosedAt: Instant,
     val updatedAt: Instant
 )
+
 data class VisitUpdate(
     val date: LocalDate,
     val department: String,
@@ -46,13 +47,13 @@ data class UserVisitUpdate(
     val notes: String? = null,
     val visitAt: Instant
 )
+
 data class UserVisitRequest(
     val visitId: String,
     val userId: String,
     val accessToken: String,
     val visitInfo: UserVisitUpdate
 )
-
 data class UserPrescriptionRequest(
     val prescriptionId: String,
     val visitId: String,
@@ -60,7 +61,6 @@ data class UserPrescriptionRequest(
     val accessToken: String,
     val prescriptionUpdate: PrescriptionUpdate,
 )
-
 data class UserLabRequest(
     val labResultId: String,
     val visitId: String,
@@ -68,11 +68,16 @@ data class UserLabRequest(
     val accessToken: String,
     val labResultUpdate: LabResultUpdate
 )
-
 data class UserDiagnosisRequest(
     val diagnosisId: String,
     val visitId: String,
     val userId: String,
     val accessToken: String,
     val diagnosisUpdate: DiagnosisUpdate
+)
+
+data class CommonRequest(
+    val id: String,
+    val accessToken: String,
+    val userId: String
 )

@@ -265,4 +265,11 @@ class VisitDelegateImpl : VisitDelegate {
         userVisits.allVisits[updatedCopyIndex] = updatedCopy
     }
 
+    override fun removeVisit(
+        visitId: ObjectId,
+        userVisits: UserVisits
+    ) {
+        userVisits.allVisits.removeIf { it.id == visitId }
+    }
+
 }
