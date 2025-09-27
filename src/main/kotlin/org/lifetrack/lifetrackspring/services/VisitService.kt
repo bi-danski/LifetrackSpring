@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.stereotype.Service
+import java.time.Instant
 
 @Service
 class VisitService(
@@ -31,18 +32,24 @@ class VisitService(
         return visitRepository.findUserVisitsByOwnerId(userId)
     }
 
-    fun createVisits(userId: ObjectId, accessToken: String, visitData: VisitUpdate): HttpStatus{
+    fun createVisitsDocument(userId: ObjectId, accessToken: String, visitData: VisitUpdate): HttpStatus{
         if(!validationUtil.validateRequestFromUser(userId, accessToken)){
             return HttpStatus.UNAUTHORIZED
         }
-        val userVisits = retrieveVisits(userId, accessToken)
+        val userVisits = UserVisits(id = ObjectId.get(), ownerId = userId, updatedAt = Instant.now())
         visitDelegate.insertVisit(visitData, userVisits)
 
         if(visitRepository.findById(userVisits.id).isPresent){
             return HttpStatus.CONFLICT
         }
-        visitRepository.save(userVisits)
-        return HttpStatus.OK
+        return try {
+            visitRepository.save(userVisits)
+            HttpStatus.OK
+        }catch (_: MongoWriteException){
+            HttpStatus.UNPROCESSABLE_ENTITY
+        }catch (_: MongoException){
+            HttpStatus.INTERNAL_SERVER_ERROR
+        }
     }
 
     fun amendVisitInfo(visitId: ObjectId, userId: ObjectId, accessToken: String, userVisitData: UserVisitUpdate): HttpStatus{

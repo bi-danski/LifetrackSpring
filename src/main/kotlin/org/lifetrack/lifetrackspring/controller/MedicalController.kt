@@ -17,7 +17,8 @@ class MedicalController(
     private val medicalService: MedicalService,
     private val visitService: VisitService
 ) {
-    @GetMapping
+    @GetMapping("/history")
+
     fun getUserMedicalHistory(@RequestBody body: BRequest): MedicalResponse{
         if (body.accessToken.isEmpty() && body.userId.isEmpty()){
             throw BadRequestException(HttpStatus.BAD_REQUEST.toString())
@@ -26,26 +27,7 @@ class MedicalController(
             .toMedicalResponse()
     }
 
-    @GetMapping("/lab")
-    fun getUserMedicalLabTestResults(@RequestBody body: BRequest): MutableList<LabResultUpdate>{
-        val allResults = visitService.retrieveVisits(ObjectId(body.userId), body.accessToken)
-        return visitService.extractAllLabResults(allResults)
-    }
-
-    @GetMapping("/prescriptions")
-    fun getUserMedicalPrescriptions(@RequestBody body: BRequest ): MutableList<PrescriptionUpdate>{
-        val userVisits = visitService.retrieveVisits(ObjectId(body.userId), body.accessToken)
-        return visitService.extractAllPrescriptions(userVisits)
-    }
-//
-    @GetMapping("/diagnosis")
-    fun getUserMedicalDiagnosis(@RequestBody body: BRequest): MutableList<DiagnosisUpdate>{
-        val userVisits = visitService.retrieveVisits(ObjectId(body.userId), body.accessToken)
-        return visitService.extractAllDiagnosis(userVisits)
-
-    }
-
-    @PostMapping
+    @PostMapping("/history")
     fun initUserMedicalHistory(@RequestParam accessToken: String, @RequestBody body: MedicalPRequest): HttpStatus{
         if(accessToken.isEmpty() && body.ownerId.isEmpty()){
             return HttpStatus.UNAUTHORIZED
@@ -62,7 +44,7 @@ class MedicalController(
         return medicalService.createMedicalHistory(userMedicalHistory.ownerId, userMedicalHistory, accessToken)
     }
 
-    @PatchMapping
+    @PatchMapping("/history")
     fun updateUserMedicalHistory(@RequestParam accessToken: String, @RequestBody body: MedicalPRequest): HttpStatus{
         if (accessToken.isEmpty() && body.ownerId.isEmpty()){
             throw BadRequestException(HttpStatus.BAD_REQUEST.toString())
@@ -70,13 +52,133 @@ class MedicalController(
         return medicalService.amendMedicalHistory(body, accessToken = accessToken)
     }
 
-    @DeleteMapping
+    @DeleteMapping("/history")
     fun deleteUserMedicalHistory( @RequestBody body: BRequest): HttpStatus{
         if (body.accessToken.isEmpty() && body.userId.isEmpty()){
             throw BadRequestException(HttpStatus.BAD_REQUEST.toString())
         }
         return medicalService.eraseMedicalHistory(ObjectId(body.userId), body.accessToken)
     }
+
+
+    // Medical LabTest
+
+
+    @GetMapping("/lab")
+    fun getUserMedicalLabTestResults(@RequestBody body: BRequest): MutableList<LabResultUpdate>{
+        val allResults = visitService.retrieveVisits(ObjectId(body.userId), body.accessToken)
+        return visitService.extractAllLabResults(allResults)
+    }
+
+    @PatchMapping("/lab")
+    fun updateUserMedicalLabResults(@RequestBody body: UserLabRequest): HttpStatus{
+        if (body.userId.isEmpty() && body.accessToken.isEmpty() && body.labResultId.isEmpty() && body.visitId.isEmpty()){
+            return HttpStatus.BAD_REQUEST
+        }
+        return try {
+            visitService.amendVisitLabResults(
+                userRequest = body
+            )
+            HttpStatus.OK
+        }catch (_: Exception) {
+            HttpStatus.SERVICE_UNAVAILABLE
+        }
+    }
+
+    @DeleteMapping(path=["/{id}"])
+    fun deleteUserMedicalLabResult(@PathVariable id: String, body: BRequest): HttpStatus{
+        // ToDo
+        return HttpStatus.SERVICE_UNAVAILABLE
+    }
+
+
+    // Medical Prescriptions
+
+
+    @GetMapping("/prescriptions")
+    fun getUserMedicalPrescription(@RequestBody body: BRequest ): MutableList<PrescriptionUpdate>{
+        val userVisits = visitService.retrieveVisits(ObjectId(body.userId), body.accessToken)
+        return visitService.extractAllPrescriptions(userVisits)
+    }
+
+    @PatchMapping("/prescriptions")
+    fun updateUserMedicalPrescriptions(@RequestBody body: UserPrescriptionRequest): HttpStatus{
+        if(body.accessToken.isEmpty() && body.prescriptionId.isEmpty() && body.visitId.isEmpty() && body.prescriptionId.isEmpty()){
+            return HttpStatus.BAD_REQUEST
+        }
+        return visitService.amendVisitPrescriptions(body)
+    }
+
+    @DeleteMapping(path=["/prescriptions/{id}"])
+    fun deleteUserMedicalPrescription(@PathVariable id: String, body: BRequest): HttpStatus{
+        // ToDo
+        return HttpStatus.SERVICE_UNAVAILABLE
+    }
+
+
+    // Medical Diagnosis
+
+
+    @GetMapping("/diagnosis")
+    fun getUserMedicalDiagnosis(@RequestBody body: BRequest): MutableList<DiagnosisUpdate>{
+        val userVisits = visitService.retrieveVisits(ObjectId(body.userId), body.accessToken)
+        return visitService.extractAllDiagnosis(userVisits)
+
+    }
+
+    @PatchMapping("/diagnosis")
+    fun updateUserMedicalDiagnosis(@RequestBody body: UserDiagnosisRequest): HttpStatus{
+        if(body.userId.isEmpty() && body.visitId.isEmpty() && body.diagnosisId.isEmpty() && body.accessToken.isEmpty()){
+            return HttpStatus.BAD_REQUEST
+        }
+        return try {
+            visitService.amendVisitDiagnosis(
+                userRequest = body
+            )
+        }catch (_: Exception){
+            HttpStatus.SERVICE_UNAVAILABLE
+        }
+    }
+
+    @DeleteMapping(path=["/diagnosis/{id}"])
+    fun deleteUserMedicalDiagnosis(@PathVariable id: String, body: BRequest): HttpStatus{
+        // ToDo
+        return HttpStatus.SERVICE_UNAVAILABLE
+    }
+
+
+    // Medical/FollowUp Visits
+
+
+    @PostMapping("/visit")
+    fun initUserMedicalVisits(@RequestParam userId: String, accessToken: String, @RequestBody visitBody: VisitUpdate): HttpStatus{
+        if(userId.isEmpty() && accessToken.isEmpty()){
+            return HttpStatus.BAD_REQUEST
+        }
+        return try{
+            visitService.createVisitsDocument(ObjectId(userId), accessToken, visitBody)
+        }catch (_: Exception){
+            HttpStatus.SERVICE_UNAVAILABLE
+        }
+    }
+
+    @PatchMapping("/visit")
+    fun updateUserMedicalVisitInfo(@RequestBody body: UserVisitRequest): HttpStatus{
+        if(body.userId.isEmpty() && body.visitId.isEmpty() && body.accessToken.isEmpty()){
+            return HttpStatus.BAD_REQUEST
+        }
+        return try{
+            visitService.amendVisitInfo(visitId = ObjectId(body.visitId),
+                userId = ObjectId(body.userId),
+                accessToken = body.accessToken,
+                userVisitData = body.visitInfo
+            )
+            HttpStatus.OK
+        }catch (_: Exception){
+            HttpStatus.SERVICE_UNAVAILABLE
+        }
+    }
+
 
 
 }
