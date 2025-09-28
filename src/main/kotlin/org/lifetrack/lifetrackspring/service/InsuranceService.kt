@@ -1,4 +1,4 @@
-package org.lifetrack.lifetrackspring.services
+package org.lifetrack.lifetrackspring.service
 
 import org.bson.types.ObjectId
 import org.lifetrack.lifetrackspring.database.model.data.Insurance

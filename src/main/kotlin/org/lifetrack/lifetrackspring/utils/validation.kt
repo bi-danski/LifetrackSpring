@@ -1,7 +1,7 @@
 package org.lifetrack.lifetrackspring.utils
 
 import org.bson.types.ObjectId
-import org.lifetrack.lifetrackspring.services.JwtService
+import org.lifetrack.lifetrackspring.service.JwtService
 
 import org.springframework.stereotype.Component
 

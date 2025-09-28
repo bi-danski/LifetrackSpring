@@ -6,7 +6,7 @@ import org.lifetrack.lifetrackspring.database.model.data.Billings
 import org.lifetrack.lifetrackspring.database.model.dto.BRequest
 import org.lifetrack.lifetrackspring.database.model.dto.BillingPRequest
 import org.lifetrack.lifetrackspring.database.model.dto.BillingResponse
-import org.lifetrack.lifetrackspring.services.BillingService
+import org.lifetrack.lifetrackspring.service.BillingService
 import org.lifetrack.lifetrackspring.database.model.helpers.toBillingsResponse
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*

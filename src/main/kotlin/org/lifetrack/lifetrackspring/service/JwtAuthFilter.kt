@@ -1,4 +1,4 @@
-package org.lifetrack.lifetrackspring.services
+package org.lifetrack.lifetrackspring.service
 
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest

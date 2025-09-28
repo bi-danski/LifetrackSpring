@@ -5,7 +5,7 @@ import org.lifetrack.lifetrackspring.database.model.data.TokenPair
 import org.lifetrack.lifetrackspring.database.model.dto.LoginAuthRequest
 import org.lifetrack.lifetrackspring.database.model.dto.UserDataResponse
 import org.lifetrack.lifetrackspring.database.model.dto.UserSignUpRequest
-import org.lifetrack.lifetrackspring.services.AuthService
+import org.lifetrack.lifetrackspring.service.AuthService
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping

@@ -1,4 +1,4 @@
-package org.lifetrack.lifetrackspring.services
+package org.lifetrack.lifetrackspring.service
 
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts

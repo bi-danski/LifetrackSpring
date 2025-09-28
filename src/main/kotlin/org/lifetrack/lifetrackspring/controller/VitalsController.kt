@@ -4,8 +4,8 @@ import org.bson.types.ObjectId
 import org.lifetrack.lifetrackspring.database.model.data.UserVitals
 import org.lifetrack.lifetrackspring.database.model.dto.VitalsRequest
 import org.lifetrack.lifetrackspring.database.model.dto.VitalsResponse
-import org.lifetrack.lifetrackspring.services.JwtService
-import org.lifetrack.lifetrackspring.services.VitalService
+import org.lifetrack.lifetrackspring.service.JwtService
+import org.lifetrack.lifetrackspring.service.VitalService
 import org.lifetrack.lifetrackspring.database.model.helpers.toVitalsResponse
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*

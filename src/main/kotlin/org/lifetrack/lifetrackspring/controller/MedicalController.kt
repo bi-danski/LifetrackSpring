@@ -5,8 +5,8 @@ import org.bson.types.ObjectId
 import org.lifetrack.lifetrackspring.database.model.data.MedicalHistory
 import org.lifetrack.lifetrackspring.database.model.dto.*
 import org.lifetrack.lifetrackspring.database.model.helpers.toMedicalResponse
-import org.lifetrack.lifetrackspring.services.MedicalService
-import org.lifetrack.lifetrackspring.services.VisitService
+import org.lifetrack.lifetrackspring.service.MedicalService
+import org.lifetrack.lifetrackspring.service.VisitService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import java.time.Instant

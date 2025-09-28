@@ -1,4 +1,4 @@
-package org.lifetrack.lifetrackspring.services
+package org.lifetrack.lifetrackspring.service
 
 import com.mongodb.MongoException
 import com.mongodb.MongoQueryException

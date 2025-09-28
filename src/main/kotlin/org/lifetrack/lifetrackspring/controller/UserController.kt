@@ -3,7 +3,7 @@ package org.lifetrack.lifetrackspring.controller
 import org.bson.types.ObjectId
 import org.lifetrack.lifetrackspring.database.model.dto.UserDataRequest
 import org.lifetrack.lifetrackspring.database.model.dto.UserDataResponse
-import org.lifetrack.lifetrackspring.services.UserService
+import org.lifetrack.lifetrackspring.service.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
@@ -19,7 +19,7 @@ class UserController(
 
     @DeleteMapping
     fun wipeUserData( @RequestBody userBodyRequest: UserDataRequest): HttpStatus {
-        if (userBodyRequest.accessToken.isNullOrEmpty()){
+        if (userBodyRequest.accessToken.isEmpty()){
             return HttpStatus.BAD_REQUEST
         }
         return userService.deleteUser(ObjectId(userBodyRequest.id), accessToken = userBodyRequest.accessToken)
