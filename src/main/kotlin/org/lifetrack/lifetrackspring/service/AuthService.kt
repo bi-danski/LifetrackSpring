@@ -7,11 +7,12 @@ import org.lifetrack.lifetrackspring.database.model.data.User
 import org.lifetrack.lifetrackspring.database.model.dto.LoginAuthRequest
 import org.lifetrack.lifetrackspring.database.model.dto.UserDataResponse
 import org.lifetrack.lifetrackspring.database.model.dto.UserSignUpRequest
+import org.lifetrack.lifetrackspring.database.model.helpers.toResponse
 import org.lifetrack.lifetrackspring.database.repository.TokenRepository
 import org.lifetrack.lifetrackspring.database.repository.UserRepository
 import org.lifetrack.lifetrackspring.security.HashEncoder
 import org.lifetrack.lifetrackspring.security.TokenEncoder
-import org.lifetrack.lifetrackspring.database.model.helpers.toResponse
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
@@ -35,7 +36,7 @@ class AuthService(
         val newAccessToken =  jwtService.generateAccessToken(response.id)
         val newRefreshToken = jwtService.generateRefreshToken(response.id)
 
-        return if (saveRefreshToken(response.id, newRefreshToken)) {
+        return if (saveRefreshToken(response.id, newRefreshToken).is2xxSuccessful) {
             TokenPair(
                 accessToken = newAccessToken,
                 refreshToken = newRefreshToken
@@ -60,20 +61,22 @@ class AuthService(
         return response.toResponse()
     }
 
-    fun saveRefreshToken(userId: ObjectId, jwtRefreshToken: String): Boolean{
-        try{
+    fun saveRefreshToken(userId: ObjectId, jwtRefreshToken: String): HttpStatus{
+        return try{
             val tokenHash = tokenEncoder.hashToken(jwtRefreshToken)
             val refreshTokenValidityMs: Long = 2L * 24L * 60 * 60 * 1000
-            tokenRepository.save(RefreshToken(
-                userId = userId,
-                tokenHash = tokenHash,
-                createdAt = Instant.now(),
-                expiresAt = Instant.now().plusMillis(refreshTokenValidityMs),
-            ))
-            return true
+            tokenRepository.save(
+                RefreshToken(
+                    userId = userId,
+                    tokenHash = tokenHash,
+                    createdAt = Instant.now(),
+                    expiresAt = Instant.now().plusMillis(refreshTokenValidityMs),
+                )
+            )
+            HttpStatus.CREATED
         }catch (e: Exception){
             zanguZangu.log(zanguZangu.level, e.message)
-            return false
+            HttpStatus.INTERNAL_SERVER_ERROR
         }
     }
 
