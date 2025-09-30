@@ -1,58 +1,82 @@
 package org.lifetrack.lifetrackspring.service
 
+import com.mongodb.MongoException
+import com.mongodb.MongoWriteException
 import org.bson.types.ObjectId
 import org.lifetrack.lifetrackspring.database.model.data.Insurance
+import org.lifetrack.lifetrackspring.database.model.dto.InsuranceRequest
+import org.lifetrack.lifetrackspring.database.model.dto.InsuranceResponse
+import org.lifetrack.lifetrackspring.database.model.helpers.toInsuranceResponse
 import org.lifetrack.lifetrackspring.database.repository.InsuranceRepository
-import org.lifetrack.lifetrackspring.utils.ValidationUtil
+import org.lifetrack.lifetrackspring.exception.ResourceNotFound
 import org.springframework.http.HttpStatus
-import org.springframework.security.access.AccessDeniedException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.Instant
 
 @Service
 class InsuranceService(
     private val insuranceRepository: InsuranceRepository,
-    private val validationUtil: ValidationUtil
 ) {
-    fun retrieveInsurance(insuranceId: ObjectId, accessToken: String): Insurance{
-        if(!validationUtil.validateRequestFromUser(insuranceId, accessToken)){
-            throw AccessDeniedException(HttpStatus.UNAUTHORIZED.toString())
-        }
-        return insuranceRepository.getInsuranceById(insuranceId)
+    fun retrieveInsurance(insuranceId: ObjectId): InsuranceResponse{
+        return insuranceRepository.getInsuranceById(insuranceId).toInsuranceResponse()
     }
 
-    fun eraseInsurance(insuranceId: ObjectId, accessToken: String): HttpStatus{
-        if(!validationUtil.validateRequestFromUser(insuranceId, accessToken)){
-            return HttpStatus.UNAUTHORIZED
+    fun retrieveInsuranceByUserId(userId: ObjectId): InsuranceResponse {
+        if (!insuranceRepository.existsInsuranceByOwnerId(userId)) {
+            throw ResourceNotFound(HttpStatus.NOT_FOUND.toString())
         }
-        if(insuranceRepository.findById(insuranceId).isEmpty){
-            return HttpStatus.NOT_FOUND
+        return insuranceRepository.findInsuranceByOwnerId(userId).toInsuranceResponse()
+    }
+
+    fun eraseInsurance(insuranceId: ObjectId): HttpStatus{
+        return try {
+            insuranceRepository.deleteInsuranceById(insuranceId)
+            HttpStatus.OK
+        }catch (_: MongoException){
+            HttpStatus.INTERNAL_SERVER_ERROR
         }
-        insuranceRepository.deleteInsuranceById(insuranceId)
-        return HttpStatus.OK
     }
 
     @Transactional
-    fun amendInsurance(insurance: Insurance, accessToken: String): HttpStatus{
-        if(!validationUtil.validateRequestFromUser(insurance.id, accessToken)){
-            return HttpStatus.UNAUTHORIZED
+    fun amendInsurance(userId: ObjectId, insurance: InsuranceRequest): HttpStatus{
+        return try {
+            val updatedInsurance = insuranceRepository.findInsuranceByOwnerId(userId).copy(
+                provider = insurance.provider,
+                coverage = insurance.coverage,
+                policyNumber = insurance.policyNumber,
+                updatedAt = Instant.now()
+            )
+            insuranceRepository.save<Insurance>(updatedInsurance)
+            HttpStatus.OK
+        }catch (_: MongoWriteException){
+            HttpStatus.UNPROCESSABLE_ENTITY
+        }catch (_: MongoException){
+            HttpStatus.INTERNAL_SERVER_ERROR
         }
-        if(insuranceRepository.findById(insurance.id).isEmpty){
-            return HttpStatus.NOT_FOUND
-        }
-        insuranceRepository.deleteInsuranceById(insurance.id)
-        insuranceRepository.save<Insurance>(insurance)
-        return HttpStatus.OK
     }
 
-    fun storeInsurance(insurance: Insurance, accessToken: String): HttpStatus{
-        if(!insuranceRepository.findById(insurance.id).isEmpty){
-            return HttpStatus.CONFLICT
+    fun storeInsurance(userId: ObjectId, insurance: InsuranceRequest): HttpStatus{
+        return try {
+            if(insuranceRepository.existsInsuranceByOwnerId(userId)){
+                return HttpStatus.CONFLICT
+            }
+            insuranceRepository.save<Insurance>(
+                Insurance(
+                    id = ObjectId.get(),
+                    ownerId = userId,
+                    provider = insurance.provider,
+                    policyNumber = insurance.policyNumber,
+                    coverage = insurance.coverage,
+                    updatedAt = Instant.now(),
+                    createdAt = Instant.now()
+                )
+            )
+            HttpStatus.CREATED
+        }catch (_: MongoWriteException){
+            HttpStatus.UNPROCESSABLE_ENTITY
+        }catch (_: MongoException){
+            HttpStatus.INTERNAL_SERVER_ERROR
         }
-        if(!validationUtil.validateRequestFromUser(insurance.id, accessToken)){
-            return HttpStatus.UNAUTHORIZED
-        }
-        insuranceRepository.save<Insurance>(insurance)
-        return HttpStatus.CREATED
     }
 }

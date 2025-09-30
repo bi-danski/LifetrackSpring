@@ -9,9 +9,11 @@ import java.time.LocalDate
 @Document("insurances")
 data class Insurance(
     @Id val id: ObjectId,
+    val ownerId: ObjectId,
     val provider: String,
     val coverage: String,
     val policyNumber: String,
+    val createdAt: Instant,
     val updatedAt: Instant
 )
 

@@ -6,9 +6,6 @@ import jakarta.validation.constraints.NotNull
 data class InsuranceRequest(
     @field:NotNull
     @field:NotBlank
-    val accessToken: String,
-    @field:NotNull
-    @field:NotBlank
     val provider: String,
     @field:NotNull
     @field:NotBlank

@@ -7,4 +7,6 @@ import org.springframework.data.mongodb.repository.MongoRepository
 interface InsuranceRepository: MongoRepository<Insurance, ObjectId> {
     fun getInsuranceById(id: ObjectId): Insurance
     fun deleteInsuranceById(id: ObjectId)
+    fun findInsuranceByOwnerId(ownerId: ObjectId): Insurance
+    fun existsInsuranceByOwnerId(ownerId: ObjectId): Boolean
 }

@@ -1,66 +1,38 @@
 package org.lifetrack.lifetrackspring.controller
 
-import org.apache.coyote.BadRequestException
 import org.bson.types.ObjectId
-import org.lifetrack.lifetrackspring.database.model.data.Insurance
 import org.lifetrack.lifetrackspring.database.model.dto.InsuranceRequest
+import org.lifetrack.lifetrackspring.database.model.dto.InsuranceResponse
 import org.lifetrack.lifetrackspring.service.InsuranceService
 import org.springframework.http.HttpStatus
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
-import java.time.Instant
 
 @RestController
 @RequestMapping("/user/")
 class InsuranceController(
     private val insuranceService: InsuranceService
 ) {
+    private val userId = ObjectId(SecurityContextHolder.getContext().authentication.principal as String)
+
     @GetMapping("/insure")
-    fun getUserInsurance(@RequestParam id: String, @RequestParam accessToken: String): Insurance{
-        if (id.isEmpty() && accessToken.isEmpty()){
-            throw BadRequestException(HttpStatus.BAD_REQUEST.toString())
-        }
-        return insuranceService.retrieveInsurance(ObjectId(id), accessToken)
+    fun getUserInsurance(@RequestParam id: String): InsuranceResponse {
+        return insuranceService.retrieveInsurance(ObjectId(id))
     }
-    
-    @DeleteMapping(path=["/{insuranceId}"])
-    fun deleteUserInsurance(@PathVariable insuranceId: String, @RequestBody insBody: InsuranceRequest): HttpStatus{
-        if (insBody.accessToken.isEmpty()){
-            return HttpStatus.BAD_REQUEST
-        }
-        insuranceService.eraseInsurance(ObjectId(insuranceId), accessToken = insBody.accessToken)
-        return HttpStatus.OK
+
+    @DeleteMapping(path = ["/{insuranceId}"])
+    fun deleteUserInsurance(@PathVariable insuranceId: String): HttpStatus {
+        return insuranceService.eraseInsurance(ObjectId(insuranceId))
     }
 
     @PostMapping("/insure")
-    fun saveUserInsurance(@RequestBody body: InsuranceRequest): HttpStatus{
-        if(body.accessToken.isEmpty() && body.ownerId.isEmpty()){
-            return HttpStatus.BAD_REQUEST
-        }
-        return insuranceService.storeInsurance(
-            Insurance(
-                updatedAt = Instant.now(),
-                id = ObjectId(body.ownerId),
-                provider = body.provider,
-                coverage = body.coverage,
-                policyNumber = body.policyNumber
-            ),
-            accessToken = body.accessToken
-        )
+    fun saveUserInsurance(@RequestBody body: InsuranceRequest): HttpStatus {
+        return insuranceService.storeInsurance(userId, body)
+
     }
+
     @PatchMapping("/insure")
-    fun updateUserInsurance(@RequestBody body: InsuranceRequest): HttpStatus{
-        if(body.accessToken.isEmpty() && body.ownerId.isEmpty()){
-            return HttpStatus.BAD_REQUEST
-        }
-        return insuranceService.amendInsurance(
-            Insurance(
-                updatedAt = Instant.now(),
-                id = ObjectId(body.ownerId),
-                provider = body.provider,
-                coverage = body.coverage,
-                policyNumber = body.policyNumber
-            ),
-            accessToken = body.accessToken
-        )
+    fun updateUserInsurance(@RequestBody body: InsuranceRequest): HttpStatus {
+        return insuranceService.amendInsurance(userId, body)
     }
 }
