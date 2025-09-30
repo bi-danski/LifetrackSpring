@@ -13,8 +13,10 @@ import org.lifetrack.lifetrackspring.database.repository.UserRepository
 import org.lifetrack.lifetrackspring.security.HashEncoder
 import org.lifetrack.lifetrackspring.security.TokenEncoder
 import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatusCode
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.server.ResponseStatusException
 import java.time.Instant
 import java.util.logging.Logger
 
@@ -28,10 +30,10 @@ class AuthService(
 ) {
     private val zanguZangu = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME)
     fun loginUser(bodyParams: LoginAuthRequest): TokenPair? {
-        val response = userRepository.findByEmailAddress(bodyParams.emailAddress) ?: throw IllegalArgumentException("Invalid Credentials")
+        val response = userRepository.findByEmailAddress(bodyParams.emailAddress) ?: throw ResponseStatusException(HttpStatusCode.valueOf(401),"Invalid Credentials")
 
         if (!hashEncoder.match(bodyParams.password, response.passwordHash)){
-            throw IllegalArgumentException("Invalid Credentials")
+            throw ResponseStatusException(HttpStatusCode.valueOf(401), "Invalid Credentials")
         }
         val newAccessToken =  jwtService.generateAccessToken(response.id)
         val newRefreshToken = jwtService.generateRefreshToken(response.id)
@@ -83,15 +85,15 @@ class AuthService(
     @Transactional
     fun refresh(jwtRefreshToken: String): TokenPair{
         if(!jwtService.validateRefreshToken(jwtRefreshToken)){
-            throw IllegalArgumentException("Invalid Refresh Token")
+            throw ResponseStatusException(HttpStatusCode.valueOf(401),"Invalid Refresh Token")
         }
         val userId = jwtService.parseUserIdFromToken(jwtRefreshToken)
         val user = userRepository.findById(ObjectId(userId)).orElseThrow {
-            IllegalArgumentException("Invalid Refresh Token")
+            ResponseStatusException(HttpStatusCode.valueOf(401),"Invalid Refresh Token")
         }
         val hashedToken = tokenEncoder.hashToken(jwtRefreshToken)
         tokenRepository.findByUserIdAndTokenHash(user.id, hashedToken) ?: throw
-            IllegalArgumentException("Refresh Token Not Recognized")
+        ResponseStatusException(HttpStatusCode.valueOf(401), "Refresh Token Not Recognized")
 
         tokenRepository.deleteByUserIdAndTokenHash(user.id, hashedToken)
         val newAccToken = jwtService.generateAccessToken(user.id)

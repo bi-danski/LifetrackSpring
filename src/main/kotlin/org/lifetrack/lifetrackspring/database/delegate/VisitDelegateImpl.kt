@@ -260,9 +260,8 @@ class VisitDelegateImpl : VisitDelegate {
             reasonForVisit = update.reasonForVisit,
             visitAt = update.visitAt,
         )
-        val updatedCopyIndex = userVisits.allVisits.indexOfFirst { it.id == visitId }
         userVisits.updatedAt = Instant.now()
-        userVisits.allVisits[updatedCopyIndex] = updatedCopy
+        userVisits.allVisits[userVisits.allVisits.indexOfFirst { it.id == visitId }] = updatedCopy
     }
 
     override fun removeVisit(

@@ -14,20 +14,16 @@ data class Billings(
 )
 
 data class Billing(
-    val id: ObjectId = ObjectId.get(),
-    val visitRefId: String,
-    val total: Double,
+    @Id val id: ObjectId,
+    val visitId: ObjectId,
     val status: String,
-    val services: BillingItem,
+    val service: String,
+    val totalAmount: Double,
     val paymentMethod: String,
     val transactionId: String,
+    val createdAt: Instant,
     val updatedAt: Instant,
     val ownerId: ObjectId
 )
 
-data class BillingItem(
-    val service: String,
-    val amount: Double,
-    val updatedAt: Instant
-)
 

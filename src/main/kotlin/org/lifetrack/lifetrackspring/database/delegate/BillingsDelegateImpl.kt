@@ -2,15 +2,14 @@ package org.lifetrack.lifetrackspring.database.delegate
 
 import org.bson.types.ObjectId
 import org.lifetrack.lifetrackspring.database.model.data.Billing
-import org.lifetrack.lifetrackspring.database.model.data.BillingItem
 import org.lifetrack.lifetrackspring.database.model.data.Billings
 import org.springframework.stereotype.Component
 
 @Component
 class BillingsDelegateImpl: BillingsDelegate{
 
-    override fun extractBillingServiceById(id: ObjectId, billings: Billings): BillingItem {
-        return billings.billingInfo.first { it.id == id }.services
+    override fun extractBillingServiceById(id: ObjectId, billings: Billings): String {
+        return billings.billingInfo.first { it.id == id }.service
     }
 
     override fun extractBillingByOwnerId(ownerId: ObjectId, billings: Billings): Billing{
@@ -18,7 +17,7 @@ class BillingsDelegateImpl: BillingsDelegate{
     }
 
     override fun extractBillingInfoByVisitReferenceId(visitRefId: String, billings: Billings): Billing{
-        return billings.billingInfo.first { it.visitRefId == visitRefId }
+        return billings.billingInfo.first { it.visitId == ObjectId(visitRefId) }
     }
 
     override fun extractBillingInfoByTransactionId(transactionId: String, billings: Billings): Billing{
