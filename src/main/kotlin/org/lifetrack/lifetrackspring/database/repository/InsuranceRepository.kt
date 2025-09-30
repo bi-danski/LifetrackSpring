@@ -9,4 +9,5 @@ interface InsuranceRepository: MongoRepository<Insurance, ObjectId> {
     fun deleteInsuranceById(id: ObjectId)
     fun findInsuranceByOwnerId(ownerId: ObjectId): Insurance
     fun existsInsuranceByOwnerId(ownerId: ObjectId): Boolean
+    fun existsInsuranceById(id: ObjectId): Boolean
 }

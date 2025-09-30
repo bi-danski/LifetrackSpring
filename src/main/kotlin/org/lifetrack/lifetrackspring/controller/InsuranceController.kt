@@ -15,23 +15,28 @@ class InsuranceController(
 ) {
     private val userId = ObjectId(SecurityContextHolder.getContext().authentication.principal as String)
 
-    @GetMapping("/insure")
-    fun getUserInsurance(@RequestParam id: String): InsuranceResponse {
-        return insuranceService.retrieveInsurance(ObjectId(id))
+    @GetMapping("/insurance")
+    fun getUserInsuranceById(@RequestParam insuranceId: String): InsuranceResponse {
+        return insuranceService.retrieveInsurance(ObjectId(insuranceId))
     }
 
-    @DeleteMapping(path = ["/{insuranceId}"])
+    @GetMapping("/insurance")
+    fun getUserInsuranceByUserId(@RequestParam id: String): InsuranceResponse {
+        return insuranceService.retrieveInsuranceByUserId(ObjectId(id))
+    }
+
+        @DeleteMapping(path = ["/{insuranceId}"])
     fun deleteUserInsurance(@PathVariable insuranceId: String): HttpStatus {
         return insuranceService.eraseInsurance(ObjectId(insuranceId))
     }
 
-    @PostMapping("/insure")
+    @PostMapping("/insurance")
     fun saveUserInsurance(@RequestBody body: InsuranceRequest): HttpStatus {
         return insuranceService.storeInsurance(userId, body)
 
     }
 
-    @PatchMapping("/insure")
+    @PatchMapping("/insurance")
     fun updateUserInsurance(@RequestBody body: InsuranceRequest): HttpStatus {
         return insuranceService.amendInsurance(userId, body)
     }

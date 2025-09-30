@@ -19,6 +19,9 @@ class InsuranceService(
     private val insuranceRepository: InsuranceRepository,
 ) {
     fun retrieveInsurance(insuranceId: ObjectId): InsuranceResponse{
+        if (!insuranceRepository.existsInsuranceById(insuranceId)) {
+            throw ResourceNotFound(HttpStatus.NOT_FOUND.toString())
+        }
         return insuranceRepository.getInsuranceById(insuranceId).toInsuranceResponse()
     }
 
