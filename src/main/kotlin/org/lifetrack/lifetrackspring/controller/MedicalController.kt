@@ -15,41 +15,41 @@ class MedicalController(
     private val medicalService: MedicalService,
     private val visitService: VisitService
 ) {
-    private val userId = ObjectId(SecurityContextHolder.getContext().authentication.principal as String)
+    final fun userId() = ObjectId(SecurityContextHolder.getContext().authentication.principal as String)
 
     @GetMapping("/history")
     fun getUserMedicalHistory(): MedicalResponse{
-        return medicalService.retrieveMedicalHistory(userId)
+        return medicalService.retrieveMedicalHistory(userId())
             .toMedicalResponse()
     }
 
     @PostMapping("/history")
     fun initUserMedicalHistory(@RequestBody body: MedicalPRequest): HttpStatus{
-        return medicalService.createMedicalHistory(userId, body)
+        return medicalService.createMedicalHistory(userId(), body)
     }
 
     @PatchMapping("/history")
     fun updateUserMedicalHistory(@RequestBody body: MedicalPRequest): HttpStatus{
-         return medicalService.amendMedicalHistory(userId, body)
+         return medicalService.amendMedicalHistory(userId(), body)
     }
 
     @DeleteMapping("/history")
     fun deleteUserMedicalHistory(): HttpStatus{
-        return medicalService.eraseMedicalHistory(userId)
+        return medicalService.eraseMedicalHistory(userId())
     }
 
     // Medical LabTest
 
     @GetMapping("/lab")
     fun getUserMedicalLabTestResults(): MutableList<LabResultUpdate>{
-        val allResults = visitService.retrieveVisits(userId)
+        val allResults = visitService.retrieveVisits(userId())
         return visitService.extractAllLabResults(allResults)
     }
 
     @PatchMapping("/lab")
     fun updateUserMedicalLabResults(@RequestBody body: UserLabRequest): HttpStatus{
         return try {
-            visitService.amendVisitLabResults(userId, userRequest = body)
+            visitService.amendVisitLabResults(userId(), userRequest = body)
             HttpStatus.OK
         }catch (_: Exception) {
             HttpStatus.SERVICE_UNAVAILABLE
@@ -62,7 +62,7 @@ class MedicalController(
             visitService.eraseVisitLabResults(
                 ObjectId(body.visitId),
                 ObjectId(body.id),
-                userId
+                userId()
             )
         }catch (_: Exception){
             HttpStatus.SERVICE_UNAVAILABLE
@@ -73,14 +73,14 @@ class MedicalController(
 
     @GetMapping("/prescriptions")
     fun getUserMedicalPrescription(): MutableList<PrescriptionUpdate>{
-        val userVisits = visitService.retrieveVisits(userId)
+        val userVisits = visitService.retrieveVisits(userId())
         return visitService.extractAllPrescriptions(userVisits)
     }
 
     @PatchMapping("/prescriptions")
     fun updateUserMedicalPrescriptions(@RequestBody bodyRequest: UserPrescriptionRequest): HttpStatus{
         return try {
-            visitService.amendVisitPrescriptions(userId, bodyRequest)
+            visitService.amendVisitPrescriptions(userId(), bodyRequest)
         }catch (_: Exception){
             HttpStatus.SERVICE_UNAVAILABLE
         }
@@ -93,7 +93,7 @@ class MedicalController(
             visitService.eraseVisitPrescription(
                 ObjectId(body.visitId),
                 ObjectId(body.id),
-                userId
+                userId()
             )
         }catch (_: Exception){
             HttpStatus.SERVICE_UNAVAILABLE
@@ -104,14 +104,14 @@ class MedicalController(
 
     @GetMapping("/diagnosis")
     fun getUserMedicalDiagnosis(): MutableList<DiagnosisUpdate>{
-        val userVisits = visitService.retrieveVisits(userId)
+        val userVisits = visitService.retrieveVisits(userId())
         return visitService.extractAllDiagnosis(userVisits)
     }
 
     @PatchMapping("/diagnosis")
     fun updateUserMedicalDiagnosis(@RequestBody body: UserDiagnosisRequest): HttpStatus{
         return try {
-            visitService.amendVisitDiagnosis(userId, body)
+            visitService.amendVisitDiagnosis(userId(), body)
         }catch (_: Exception){
             HttpStatus.SERVICE_UNAVAILABLE
         }
@@ -123,7 +123,7 @@ class MedicalController(
             visitService.eraseVisitDiagnosis(
                 ObjectId(body.visitId),
                 ObjectId(body.id),
-                userId
+                userId()
             )
         }catch (_: Exception){
             HttpStatus.SERVICE_UNAVAILABLE
@@ -135,7 +135,7 @@ class MedicalController(
     @PostMapping("/visit")
     fun initUserMedicalVisits(@RequestBody visitBody: VisitUpdate): HttpStatus{
         return try{
-            visitService.createVisitsDocument(userId, visitBody)
+            visitService.createVisitsDocument(userId(), visitBody)
         }catch (_: Exception){
             HttpStatus.SERVICE_UNAVAILABLE
         }
@@ -145,7 +145,7 @@ class MedicalController(
     fun updateUserMedicalVisitInfo(@RequestBody body: UserVisitRequest): HttpStatus{
           return try{
             visitService.amendVisitInfo(visitId = ObjectId(body.visitId),
-                userId = userId,
+                userId = userId(),
                 userVisitData = body.visitInfo
             )
             HttpStatus.OK
@@ -157,7 +157,7 @@ class MedicalController(
     @DeleteMapping("/visit/{visitId}")
     fun deleteUserMedicalVisit(@PathVariable visitId: String): HttpStatus{
         return try {
-            visitService.eraseVisit(ObjectId(visitId), userId)
+            visitService.eraseVisit(ObjectId(visitId), userId())
         }catch (_: Exception){
             HttpStatus.SERVICE_UNAVAILABLE
         }

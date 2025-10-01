@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/user/")
 class InsuranceController(
-    private val insuranceService: InsuranceService
+    private val insuranceService: InsuranceService,
 ) {
-    private val userId = ObjectId(SecurityContextHolder.getContext().authentication.principal as String)
+    final fun userId() = ObjectId(SecurityContextHolder.getContext().authentication.principal as String)
 
     @GetMapping("/insurance")
     fun getUserInsuranceById(@RequestParam insuranceId: String): InsuranceResponse {
@@ -32,12 +32,12 @@ class InsuranceController(
 
     @PostMapping("/insurance")
     fun saveUserInsurance(@RequestBody body: InsuranceRequest): HttpStatus {
-        return insuranceService.storeInsurance(userId, body)
+        return insuranceService.storeInsurance(userId(), body)
 
     }
 
     @PatchMapping("/insurance")
     fun updateUserInsurance(@RequestBody body: InsuranceRequest): HttpStatus {
-        return insuranceService.amendInsurance(userId, body)
+        return insuranceService.amendInsurance(userId(), body)
     }
 }

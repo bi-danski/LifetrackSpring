@@ -1,10 +1,10 @@
 package org.lifetrack.lifetrackspring.controller
 
 import org.bson.types.ObjectId
-import org.lifetrack.lifetrackspring.database.model.dto.UserDataRequest
 import org.lifetrack.lifetrackspring.database.model.dto.UserDataResponse
 import org.lifetrack.lifetrackspring.service.UserService
 import org.springframework.http.HttpStatus
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -12,22 +12,21 @@ import org.springframework.web.bind.annotation.*
 class UserController(
     private val userService: UserService
 ) {
+    final fun userId() = ObjectId(SecurityContextHolder.getContext().authentication.principal as String)
+
     @GetMapping
-    fun getUserData(@RequestBody userBodyRequest: UserDataRequest):  UserDataResponse{
-        return userService.retrieveUserDataById(ObjectId(userBodyRequest.id), userBodyRequest.accessToken)
+    fun getUserData():  UserDataResponse{
+        return userService.retrieveUserDataById(userId())
     }
 
     @DeleteMapping
-    fun wipeUserData( @RequestBody userBodyRequest: UserDataRequest): HttpStatus {
-        if (userBodyRequest.accessToken.isEmpty()){
-            return HttpStatus.BAD_REQUEST
-        }
-        return userService.deleteUser(ObjectId(userBodyRequest.id), accessToken = userBodyRequest.accessToken)
+    fun wipeUserData(): HttpStatus {
+        return userService.deleteUser(userId())
     }
 
     @PutMapping
     fun updateUserData(){
-        // TODO to be continued...
+        // ToDo
     }
 
 }

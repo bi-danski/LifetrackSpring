@@ -18,7 +18,7 @@ data class User(
     val emergencyContact: EmergencyContact? = null,
     val billingRefId: String? = null,
     val vitalReferenceId: ObjectId? = null,
-    val userVisitsReferenceId: ObjectId,
+    val userVisitsReferenceId: ObjectId? = null,
     val medicalRecords: MedicalHistory? = null
 )
 data class EmergencyContact(

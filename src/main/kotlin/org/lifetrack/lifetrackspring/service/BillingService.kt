@@ -39,7 +39,8 @@ class BillingService(
                     createdAt = Instant.now(),
                     ownerId = userId
                 )
-            )
+            ),
+            updatedAt = Instant.now()
         )
         return try {
             billingRepository.save<Billings>(newBillings)
@@ -69,7 +70,10 @@ class BillingService(
             }else{
                 return HttpStatus.NOT_FOUND
             }
-            billingRepository.save(billingsResp)
+            val updatedBillings = billingsResp.copy(
+                updatedAt = Instant.now()
+            )
+            billingRepository.save(updatedBillings)
             HttpStatus.OK
         }catch (_: MongoException){
             HttpStatus.INTERNAL_SERVER_ERROR

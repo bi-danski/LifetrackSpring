@@ -18,9 +18,6 @@ data class InsuranceRequest(
     val ownerId: String
 )
 
-data class BRequest(
-    val accessToken: String,
-)
 
 
 

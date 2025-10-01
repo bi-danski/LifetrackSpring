@@ -6,10 +6,6 @@ import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.NotNull
 import java.time.Instant
 
-data class UserDataRequest(
-    val id: String,
-    val accessToken: String
-)
 data class UserSignUpRequest(
     val fullName: String?,
     @field:NotNull(message = "Username can't be null")
