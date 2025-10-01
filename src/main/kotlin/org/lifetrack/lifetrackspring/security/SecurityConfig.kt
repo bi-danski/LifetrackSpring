@@ -22,7 +22,7 @@ class SecurityConfig(
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests { authReqConfigurer ->
                 authReqConfigurer
-                    .requestMatchers("auth/**")
+                    .requestMatchers("/auth/**")
                     .permitAll()
                     .dispatcherTypeMatchers(
                         DispatcherType.ERROR,

@@ -1,16 +1,7 @@
 package org.lifetrack.lifetrackspring.database.model.dto
 
-import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.NotNull
 import java.time.Instant
 
-data class VitalsRequest(
-    val resId: String? = null,
-    @field:NotNull
-    @field:NotBlank
-    val accessToken: String,
-    val vitalsData: VitalsDataRequest? = null
-)
 data class VitalsDataRequest(
     val pulse: Double? = null,
     val bloodPressure: Double? = null,

@@ -7,7 +7,7 @@ import java.time.Instant
 
 @Document("users")
 data class User(
-    @Id val id: ObjectId = ObjectId.get(),
+    @Id val id: ObjectId,
     val fullName: String?,
     val phoneNumber: Number?,
     val userName: String,
@@ -29,11 +29,13 @@ data class EmergencyContact(
 
 @Document("usersVitals")
 data class UserVitals(
-    @Id val id: ObjectId = ObjectId.get(),
+    @Id val id: ObjectId,
+    val ownerId: ObjectId,
     val pulse: Double?,
     val bloodPressure: Double?,
     val bodyTemperature: Double?,
     val respiratoryRate: Double?,
     val oxygenSaturation: Double?,
-    val lastUpdatedAt: Instant = Instant.now()
+    val createdAt: Instant,
+    val lastUpdatedAt: Instant
 )

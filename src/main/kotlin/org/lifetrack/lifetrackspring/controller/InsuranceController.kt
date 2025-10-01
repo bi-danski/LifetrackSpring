@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*
 class InsuranceController(
     private val insuranceService: InsuranceService,
 ) {
-    private fun userId() = ObjectId(SecurityContextHolder.getContext().authentication.principal as String)
+    final fun userId() = ObjectId(SecurityContextHolder.getContext().authentication.principal as String)
 
     @GetMapping(params = ["insuranceId"])
     fun getUserInsuranceById(@RequestParam insuranceId: String): InsuranceResponse {

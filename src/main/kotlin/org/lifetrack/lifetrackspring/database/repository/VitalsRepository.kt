@@ -5,6 +5,7 @@ import org.lifetrack.lifetrackspring.database.model.data.UserVitals
 import org.springframework.data.mongodb.repository.MongoRepository
 
 interface VitalsRepository: MongoRepository<UserVitals, ObjectId> {
-    fun findUsersVitalsById(id: ObjectId): UserVitals
-    fun deleteUsersVitalsById(id: ObjectId)
+    fun existsUserVitalsByOwnerId(ownerId: ObjectId): Boolean
+    fun findUsersVitalsByOwnerId(ownerId: ObjectId): UserVitals
+    fun deleteUsersVitalsByOwnerId(ownerId: ObjectId)
 }

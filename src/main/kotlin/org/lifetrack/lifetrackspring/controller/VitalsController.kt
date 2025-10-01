@@ -1,78 +1,40 @@
 package org.lifetrack.lifetrackspring.controller
 
 import org.bson.types.ObjectId
-import org.lifetrack.lifetrackspring.database.model.data.UserVitals
-import org.lifetrack.lifetrackspring.database.model.dto.VitalsRequest
+import org.lifetrack.lifetrackspring.database.model.dto.VitalsDataRequest
 import org.lifetrack.lifetrackspring.database.model.dto.VitalsResponse
-import org.lifetrack.lifetrackspring.service.JwtService
-import org.lifetrack.lifetrackspring.service.VitalService
 import org.lifetrack.lifetrackspring.database.model.helpers.toVitalsResponse
+import org.lifetrack.lifetrackspring.service.VitalService
 import org.springframework.http.HttpStatus
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
-import java.time.Instant
 
 @RestController
 @RequestMapping("/iot/vitals")
 class VitalsController(
     private val vitalService: VitalService,
-    private val jwtService: JwtService,
 ) {
+    final fun userId() = ObjectId(SecurityContextHolder.getContext().authentication.principal as String)
     @GetMapping
-    fun getUserVitals(@RequestParam userId:String, @RequestBody vBody: VitalsRequest): VitalsResponse{
-        return vitalService.retrieveVitals(
-            ObjectId(userId),
-            accessToken = vBody.accessToken
-        )
-            .toVitalsResponse()
+    fun getUserVitals(): VitalsResponse{
+        return vitalService.retrieveVitals(userId()).toVitalsResponse()
     }
 
     @PostMapping
-    fun saveUserVitals(@RequestBody vBody: VitalsRequest): HttpStatus{
-        if (vBody.accessToken.isEmpty() || vBody.vitalsData == null ) {
-            return HttpStatus.BAD_REQUEST
-        }
-        val userId = jwtService.parseUserIdFromToken(vBody.accessToken)
-        vitalService.storeVitals(
-            UserVitals(
-                id = ObjectId(userId),
-                pulse = vBody.vitalsData.pulse,
-                bloodPressure = vBody.vitalsData.bloodPressure,
-                bodyTemperature = vBody.vitalsData.bodyTemperature,
-                respiratoryRate = vBody.vitalsData.respiratoryRate,
-                oxygenSaturation = vBody.vitalsData.oxygenSaturation
-            ),
-            accessToken = vBody.accessToken
-        )
+    fun saveUserVitals(@RequestBody body: VitalsDataRequest): HttpStatus{
+        vitalService.storeVitals(body, userId())
         return HttpStatus.OK
     }
 
     @DeleteMapping
-    fun deleteUserVitals(@RequestBody vitalBody: VitalsRequest): HttpStatus{
-        if (vitalBody.resId.isNullOrEmpty() && vitalBody.accessToken.isEmpty()){
-            return HttpStatus.BAD_REQUEST
-        }
-        val resourceId = ObjectId(vitalBody.resId)
-        vitalService.eraseVitals(resourceId, vitalBody.accessToken)
+    fun deleteUserVitals(): HttpStatus{
+        vitalService.eraseVitals(userId())
         return HttpStatus.OK
     }
 
     @PatchMapping
-    fun updateUserVitals(@RequestBody nwVitalBody: VitalsRequest): HttpStatus{
-        if (nwVitalBody.vitalsData == null && nwVitalBody.accessToken.isEmpty() ) {
-            return HttpStatus.BAD_REQUEST
-        }
-        val userId = jwtService.parseUserIdFromToken(nwVitalBody.accessToken)
-        vitalService.amendVitals(
-            UserVitals( id = ObjectId(userId),
-                pulse = nwVitalBody.vitalsData?.pulse,
-                bloodPressure = nwVitalBody.vitalsData?.bloodPressure,
-                oxygenSaturation = nwVitalBody.vitalsData?.oxygenSaturation,
-                bodyTemperature = nwVitalBody.vitalsData?.bodyTemperature,
-                respiratoryRate = nwVitalBody.vitalsData?.respiratoryRate,
-                lastUpdatedAt = Instant.now()
-                ),
-            nwVitalBody.accessToken
-        )
+    fun updateUserVitals(@RequestBody nwVitalBody: VitalsDataRequest): HttpStatus{
+        vitalService.amendVitals(userId(), nwVitalBody)
         return HttpStatus.OK
     }
 }

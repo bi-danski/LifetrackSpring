@@ -15,7 +15,7 @@ class MedicalController(
     private val medicalService: MedicalService,
     private val visitService: VisitService
 ) {
-    private fun userId() = ObjectId(SecurityContextHolder.getContext().authentication.principal as String)
+    final fun userId() = ObjectId(SecurityContextHolder.getContext().authentication.principal as String)
 
     @GetMapping("/history")
     fun getUserMedicalHistory(): MedicalResponse{

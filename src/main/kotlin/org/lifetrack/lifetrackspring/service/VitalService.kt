@@ -6,32 +6,28 @@ import com.mongodb.MongoQueryException
 import com.mongodb.MongoWriteException
 import org.bson.types.ObjectId
 import org.lifetrack.lifetrackspring.database.model.data.UserVitals
+import org.lifetrack.lifetrackspring.database.model.dto.VitalsDataRequest
 import org.lifetrack.lifetrackspring.database.repository.VitalsRepository
-import org.lifetrack.lifetrackspring.utils.ValidationUtil
+import org.lifetrack.lifetrackspring.exception.ResourceNotFound
 import org.springframework.http.HttpStatus
-import org.springframework.security.access.AccessDeniedException
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
 
 @Service
 class VitalService(
     private val vitalsRepository: VitalsRepository,
-    private val validationUtil: ValidationUtil
 ) {
-    @Transactional
-    fun amendVitals(nwUserVitals: UserVitals, accessToken: String): HttpStatus{
-        if(!validationUtil.validateRequestFromUser(nwUserVitals.id, accessToken)) {
-            return HttpStatus.UNAUTHORIZED
-        }
+    fun amendVitals(userId: ObjectId , updatedVitals: VitalsDataRequest): HttpStatus{
         return try {
-            val response = vitalsRepository.findUsersVitalsById(nwUserVitals.id)
-            val vitalUpdate = response.copy(
-                pulse = nwUserVitals.pulse,
-                bloodPressure = nwUserVitals.bloodPressure,
-                bodyTemperature = nwUserVitals.bodyTemperature,
-                respiratoryRate = nwUserVitals.respiratoryRate,
-                oxygenSaturation = nwUserVitals.oxygenSaturation,
+            if (!vitalsRepository.existsUserVitalsByOwnerId(userId)){
+                return HttpStatus.NOT_FOUND
+            }
+            val vitalUpdate = vitalsRepository.findUsersVitalsByOwnerId(userId).copy(
+                pulse = updatedVitals.pulse,
+                bloodPressure = updatedVitals.bloodPressure,
+                bodyTemperature = updatedVitals.bodyTemperature,
+                respiratoryRate = updatedVitals.respiratoryRate,
+                oxygenSaturation = updatedVitals.oxygenSaturation,
                 lastUpdatedAt = Instant.now()
             )
             vitalsRepository.save(vitalUpdate)
@@ -47,15 +43,24 @@ class VitalService(
         }
     }
 
-    fun storeVitals(userVitals: UserVitals, accessToken: String): HttpStatus {
-        if (!validationUtil.validateRequestFromUser(userVitals.id, accessToken)) {
-            return HttpStatus.UNAUTHORIZED
-        }
-        if (vitalsRepository.findById(userVitals.id).isPresent) {
+    fun storeVitals(newVitals: VitalsDataRequest, userId: ObjectId): HttpStatus {
+        if (vitalsRepository.existsUserVitalsByOwnerId(userId)){
             return HttpStatus.CONFLICT
         }
         return try {
-            vitalsRepository.save(userVitals)
+            vitalsRepository.save(
+                UserVitals(
+                    id = ObjectId.get(),
+                    ownerId = userId,
+                    pulse = newVitals.pulse,
+                    bloodPressure = newVitals.bloodPressure,
+                    bodyTemperature = newVitals.bodyTemperature,
+                    respiratoryRate = newVitals.respiratoryRate,
+                    oxygenSaturation = newVitals.oxygenSaturation,
+                    createdAt = Instant.now(),
+                    lastUpdatedAt = Instant.now()
+                )
+            )
             HttpStatus.CREATED
         } catch (_: MongoWriteException) {
             HttpStatus.UNPROCESSABLE_ENTITY
@@ -68,15 +73,12 @@ class VitalService(
         }
     }
 
-    fun eraseVitals(userId: ObjectId, accessToken: String): HttpStatus{
-        if (!validationUtil.validateRequestFromUser(userId, accessToken)){
-            return HttpStatus.UNAUTHORIZED
-            }
-        if (vitalsRepository.findById(userId).isEmpty){
+    fun eraseVitals(userId: ObjectId): HttpStatus{
+        if (!vitalsRepository.existsUserVitalsByOwnerId(userId)){
             return HttpStatus.NOT_FOUND
         }
         return try{
-            vitalsRepository.deleteUsersVitalsById(userId)
+            vitalsRepository.deleteUsersVitalsByOwnerId(userId)
             HttpStatus.OK
         }catch (_: MongoQueryException){
             return HttpStatus.INTERNAL_SERVER_ERROR
@@ -87,16 +89,10 @@ class VitalService(
         }
     }
 
-    fun retrieveVitals(userId: ObjectId, accessToken: String): UserVitals {
-        if (!validationUtil.validateRequestFromUser(userId, accessToken)) {
-            throw AccessDeniedException(
-                HttpStatus.UNAUTHORIZED.toString()
-            )
+    fun retrieveVitals(userId: ObjectId): UserVitals {
+        if (!vitalsRepository.existsUserVitalsByOwnerId(userId)){
+            throw ResourceNotFound(HttpStatus.NOT_FOUND.toString())
         }
-        val existing = vitalsRepository.findById(userId)
-        if (existing.isEmpty) {
-            throw NoSuchElementException(HttpStatus.NOT_FOUND.toString())
-        }
-        return existing.get()
+        return vitalsRepository.findUsersVitalsByOwnerId(userId)
     }
 }
