@@ -2,6 +2,7 @@ package org.lifetrack.lifetrackspring.controller
 
 import org.bson.types.ObjectId
 import org.lifetrack.lifetrackspring.database.model.dto.UserDataResponse
+import org.lifetrack.lifetrackspring.database.model.dto.UserSignUpRequest
 import org.lifetrack.lifetrackspring.service.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.context.SecurityContextHolder
@@ -16,7 +17,7 @@ class UserController(
 
     @GetMapping
     fun getUserData():  UserDataResponse{
-        return userService.retrieveUserDataById(userId())
+        return userService.retrieveUserData(userId())
     }
 
     @DeleteMapping
@@ -24,9 +25,9 @@ class UserController(
         return userService.deleteUser(userId())
     }
 
-    @PutMapping
-    fun updateUserData(){
-        // ToDo
+    @PatchMapping
+    fun updateUserData(@RequestBody body: UserSignUpRequest): HttpStatus{
+        return userService.updateUserData(userId(), body)
     }
 
 }

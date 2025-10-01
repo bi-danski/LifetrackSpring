@@ -1,5 +1,7 @@
 package org.lifetrack.lifetrackspring.database.model.dto
 
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotNull
 import org.lifetrack.lifetrackspring.database.model.data.ChronicCondition
 import org.lifetrack.lifetrackspring.database.model.data.FamilyHistory
 import org.lifetrack.lifetrackspring.database.model.data.PastSurgery
@@ -22,7 +24,22 @@ data class MedicalPRequest(
     val familyHistory: MutableList<FamilyHistory> = mutableListOf(),
 )
 
-class InsuranceResponse(
+data class InsuranceRequest(
+    @field:NotNull
+    @field:NotBlank
+    val provider: String,
+    @field:NotNull
+    @field:NotBlank
+    val coverage: String,
+    @field:NotNull
+    @field:NotBlank
+    val policyNumber: String,
+    @field:NotNull
+    @field:NotBlank
+    val ownerId: String
+)
+
+data class InsuranceResponse(
     val provider: String,
     val coverage: String,
     val policyNumber: String,

@@ -9,17 +9,18 @@ import java.time.Instant
 data class User(
     @Id val id: ObjectId,
     val fullName: String?,
-    val phoneNumber: Number?,
+    val phoneNumber: Int,
     val userName: String,
     val emailAddress: String,
     val passwordHash: String,
-    val createdAt: Instant?,
+    val createdAt: Instant,
+    val updatedAt: Instant,
     val insuranceRefId: ObjectId? = null,
     val emergencyContact: EmergencyContact? = null,
     val billingRefId: String? = null,
     val vitalReferenceId: ObjectId? = null,
     val userVisitsReferenceId: ObjectId? = null,
-    val medicalRecords: MedicalHistory? = null
+    val medicalRecordsReferenceId: ObjectId? = null
 )
 data class EmergencyContact(
     val name: String,
