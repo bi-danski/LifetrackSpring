@@ -10,12 +10,12 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/user/medical/")
+@RequestMapping("/user/medical")
 class MedicalController(
     private val medicalService: MedicalService,
     private val visitService: VisitService
 ) {
-    final fun userId() = ObjectId(SecurityContextHolder.getContext().authentication.principal as String)
+    private fun userId() = ObjectId(SecurityContextHolder.getContext().authentication.principal as String)
 
     @GetMapping("/history")
     fun getUserMedicalHistory(): MedicalResponse{
@@ -56,7 +56,7 @@ class MedicalController(
         }
     }
 
-    @DeleteMapping
+    @DeleteMapping("/lab")
     fun deleteUserMedicalLabResult(body: VRequest): HttpStatus{
         return try {
             visitService.eraseVisitLabResults(
@@ -117,7 +117,7 @@ class MedicalController(
         }
     }
 
-    @DeleteMapping
+    @DeleteMapping("diagnosis")
     fun deleteUserMedicalDiagnosis( body: VRequest): HttpStatus{
         return try {
             visitService.eraseVisitDiagnosis(

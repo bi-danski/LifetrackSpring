@@ -9,34 +9,34 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/user/")
+@RequestMapping("/user/insurance")
 class InsuranceController(
     private val insuranceService: InsuranceService,
 ) {
-    final fun userId() = ObjectId(SecurityContextHolder.getContext().authentication.principal as String)
+    private fun userId() = ObjectId(SecurityContextHolder.getContext().authentication.principal as String)
 
-    @GetMapping("/insurance")
+    @GetMapping(params = ["insuranceId"])
     fun getUserInsuranceById(@RequestParam insuranceId: String): InsuranceResponse {
         return insuranceService.retrieveInsurance(ObjectId(insuranceId))
     }
 
-    @GetMapping("/insurance")
-    fun getUserInsuranceByUserId(@RequestParam id: String): InsuranceResponse {
-        return insuranceService.retrieveInsuranceByUserId(ObjectId(id))
+    @GetMapping
+    fun getUserInsuranceByUserId(): InsuranceResponse {
+        return insuranceService.retrieveInsuranceByUserId(userId())
     }
 
-        @DeleteMapping(path = ["/{insuranceId}"])
+    @DeleteMapping(path = ["/{insuranceId}"])
     fun deleteUserInsurance(@PathVariable insuranceId: String): HttpStatus {
         return insuranceService.eraseInsurance(ObjectId(insuranceId))
     }
 
-    @PostMapping("/insurance")
+    @PostMapping
     fun saveUserInsurance(@RequestBody body: InsuranceRequest): HttpStatus {
         return insuranceService.storeInsurance(userId(), body)
 
     }
 
-    @PatchMapping("/insurance")
+    @PatchMapping
     fun updateUserInsurance(@RequestBody body: InsuranceRequest): HttpStatus {
         return insuranceService.amendInsurance(userId(), body)
     }

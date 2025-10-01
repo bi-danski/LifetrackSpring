@@ -11,7 +11,6 @@ import org.lifetrack.lifetrackspring.database.repository.InsuranceRepository
 import org.lifetrack.lifetrackspring.exception.ResourceNotFound
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
 
 @Service
@@ -41,7 +40,6 @@ class InsuranceService(
         }
     }
 
-    @Transactional
     fun amendInsurance(userId: ObjectId, insurance: InsuranceRequest): HttpStatus{
         return try {
             val updatedInsurance = insuranceRepository.findInsuranceByOwnerId(userId).copy(
