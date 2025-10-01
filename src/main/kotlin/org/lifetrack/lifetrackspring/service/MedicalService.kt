@@ -8,71 +8,70 @@ import org.lifetrack.lifetrackspring.database.model.data.MedicalHistory
 import org.lifetrack.lifetrackspring.database.model.dto.MedicalPRequest
 import org.lifetrack.lifetrackspring.database.repository.MedicalRepository
 import org.lifetrack.lifetrackspring.exception.ResourceNotFound
-import org.lifetrack.lifetrackspring.utils.ValidationUtil
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpStatus
-import org.springframework.security.access.AccessDeniedException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.Instant
 
 
 @Service
 class MedicalService(
     private val medicalRepository: MedicalRepository,
-    private val validationUtil: ValidationUtil,
     @param:Qualifier("medicalDelegateImpl") private val medicalDelegate: MedicalDelegate
 ) : MedicalDelegate by medicalDelegate {
 
-    fun eraseMedicalHistory(userId: ObjectId, accessToken: String): HttpStatus{
-        if(!validationUtil.validateRequestFromUser(userId, accessToken)){
-            throw AccessDeniedException(HttpStatus.UNAUTHORIZED.toString())
-        }
+    fun eraseMedicalHistory(userId: ObjectId): HttpStatus{
         if(!medicalRepository.existsByOwnerId(userId)) {
             return HttpStatus.NOT_FOUND
         }
-        try {
+        return try {
             medicalRepository.deleteMedicalHistoryByOwnerId(userId)
+            HttpStatus.OK
         }catch (_: MongoException){
-            return HttpStatus.INTERNAL_SERVER_ERROR
+            HttpStatus.INTERNAL_SERVER_ERROR
         }
-        return HttpStatus.OK
     }
 
-    fun createMedicalHistory(userId: ObjectId, medHub: MedicalHistory, accessToken: String): HttpStatus{
-        if(!validationUtil.validateRequestFromUser(userId, accessToken)){
-            throw AccessDeniedException(HttpStatus.UNAUTHORIZED.toString())
-        }
-        if(medicalRepository.findById(medHub.id).isPresent){
+    fun createMedicalHistory(userId: ObjectId, body: MedicalPRequest): HttpStatus{
+        if(medicalRepository.existsByOwnerId(userId)){
             return HttpStatus.CONFLICT
         }
-        try {
-            medicalRepository.save<MedicalHistory>(medHub)
+        return try {
+            medicalRepository.save<MedicalHistory>(
+                MedicalHistory(
+                    ownerId = userId,
+                    id = ObjectId.get(),
+                    allergies = body.allergies,
+                    chronicConditions = body.chronicConditions,
+                    pastSurgeries = body.pastSurgeries,
+                    familyHistory = body.familyHistory,
+                    updatedAt = Instant.now(),
+                    createdAt = Instant.now()
+                )
+            )
+            HttpStatus.CREATED
         }catch (_: MongoWriteException){
-            return HttpStatus.UNPROCESSABLE_ENTITY
+            HttpStatus.UNPROCESSABLE_ENTITY
         }catch (_: MongoException){
-            return HttpStatus.INTERNAL_SERVER_ERROR
+            HttpStatus.INTERNAL_SERVER_ERROR
         }
-        return HttpStatus.CREATED
     }
 
     @Transactional
-    fun amendMedicalHistory(medicalRequest: MedicalPRequest, accessToken: String): HttpStatus {
-        if (!validationUtil.validateRequestFromUser(ObjectId(medicalRequest.ownerId), accessToken)) {
-            throw AccessDeniedException(HttpStatus.UNAUTHORIZED.toString())
-        }
-        if(!medicalRepository.existsByOwnerId(ObjectId(medicalRequest.ownerId))){
+    fun amendMedicalHistory( userId: ObjectId, medicalRequest: MedicalPRequest): HttpStatus {
+         if(!medicalRepository.existsByOwnerId(userId)){
             return HttpStatus.NOT_FOUND
         }
-        val existingEntity = medicalRepository.findMedicalHistoryByOwnerId(ObjectId(medicalRequest.ownerId))
-        val updatedEntity = existingEntity.copy(
-            allergies = medicalRequest.allergies.ifEmpty { existingEntity.allergies },
-            chronicConditions = medicalRequest.chronicConditions.ifEmpty { existingEntity.chronicConditions },
-            pastSurgeries = medicalRequest.pastSurgeries.ifEmpty { existingEntity.pastSurgeries },
-            familyHistory = medicalRequest.familyHistory.ifEmpty { existingEntity.familyHistory },
-//            visits = medicalRequest.visits.ifEmpty { existingEntity.visits },
-            updatedAt = java.time.Instant.now()
-        )
         return try {
+            val existingEntity = medicalRepository.findMedicalHistoryByOwnerId(userId)
+            val updatedEntity = existingEntity.copy(
+                allergies = medicalRequest.allergies.ifEmpty { existingEntity.allergies },
+                chronicConditions = medicalRequest.chronicConditions.ifEmpty { existingEntity.chronicConditions },
+                pastSurgeries = medicalRequest.pastSurgeries.ifEmpty { existingEntity.pastSurgeries },
+                familyHistory = medicalRequest.familyHistory.ifEmpty { existingEntity.familyHistory },
+                updatedAt = Instant.now()
+            )
             medicalRepository.save(updatedEntity)
             HttpStatus.OK
         } catch (_: MongoWriteException) {
@@ -82,10 +81,7 @@ class MedicalService(
         }
     }
 
-    fun retrieveMedicalHistory(userId: ObjectId, accessToken: String): MedicalHistory{
-        if(!validationUtil.validateRequestFromUser(userId, accessToken)){
-            throw AccessDeniedException(HttpStatus.UNAUTHORIZED.toString())
-        }
+    fun retrieveMedicalHistory(userId: ObjectId): MedicalHistory{
         if (!medicalRepository.existsByOwnerId(userId)){
             throw ResourceNotFound("Medical History Not Found")
         }

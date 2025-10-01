@@ -50,40 +50,25 @@ data class UserVisitUpdate(
 
 data class UserVisitRequest(
     val visitId: String,
-    val userId: String,
-    val accessToken: String,
     val visitInfo: UserVisitUpdate
 )
 data class UserPrescriptionRequest(
     val prescriptionId: String,
     val visitId: String,
-    val userId: String,
-    val accessToken: String,
     val prescriptionUpdate: PrescriptionUpdate,
 )
 data class UserLabRequest(
     val labResultId: String,
     val visitId: String,
-    val userId: String,
-    val accessToken: String,
     val labResultUpdate: LabResultUpdate
 )
 data class UserDiagnosisRequest(
     val diagnosisId: String,
     val visitId: String,
-    val userId: String,
-    val accessToken: String,
     val diagnosisUpdate: DiagnosisUpdate
-)
-
-data class CRequest(
-    val id: String,
-    val accessToken: String,
-    val userId: String
 )
 
 data class VRequest(
     val visitId: String,
-    val userId: String,
-    val accessToken: String
+    val id: String
 )

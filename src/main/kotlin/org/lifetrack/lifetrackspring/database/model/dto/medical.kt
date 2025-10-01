@@ -16,7 +16,6 @@ data class MedicalResponse(
 )
 
 data class MedicalPRequest(
-    val ownerId: String,
     val allergies: MutableList<String> = mutableListOf(),
     val chronicConditions: MutableList<ChronicCondition> = mutableListOf(),
     val pastSurgeries: MutableList<PastSurgery> = mutableListOf(),

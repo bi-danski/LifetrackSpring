@@ -25,6 +25,7 @@ data class MedicalHistory(
     val chronicConditions: MutableList<ChronicCondition> = mutableListOf(),
     val pastSurgeries: MutableList<PastSurgery> = mutableListOf(),
     val familyHistory: MutableList<FamilyHistory> = mutableListOf(),
+    val createdAt: Instant,
     val updatedAt: Instant
 )
 data class PastSurgery(
