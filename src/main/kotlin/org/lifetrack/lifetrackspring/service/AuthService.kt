@@ -1,5 +1,6 @@
 package org.lifetrack.lifetrackspring.service
 
+import jakarta.validation.Valid
 import org.bson.types.ObjectId
 import org.lifetrack.lifetrackspring.database.model.data.RefreshToken
 import org.lifetrack.lifetrackspring.database.model.data.TokenPair
@@ -12,6 +13,7 @@ import org.lifetrack.lifetrackspring.database.repository.TokenRepository
 import org.lifetrack.lifetrackspring.database.repository.UserRepository
 import org.lifetrack.lifetrackspring.security.HashEncoder
 import org.lifetrack.lifetrackspring.security.TokenEncoder
+import org.lifetrack.lifetrackspring.utils.EmailValidation
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
 import org.springframework.stereotype.Service
@@ -27,9 +29,10 @@ class AuthService(
     private val hashEncoder: HashEncoder,
     private val tokenEncoder: TokenEncoder,
     private val jwtService: JwtService,
+    private val emailValidation: EmailValidation
 ) {
     private val zanguZangu = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME)
-    fun loginUser(bodyParams: LoginAuthRequest): TokenPair? {
+    fun loginUser(@Valid bodyParams: LoginAuthRequest): TokenPair? {
         val response = userRepository.findByEmailAddress(bodyParams.emailAddress) ?: throw ResponseStatusException(HttpStatusCode.valueOf(401),"Invalid Credentials")
 
         if (!hashEncoder.match(bodyParams.password, response.passwordHash)){
@@ -48,8 +51,7 @@ class AuthService(
         }
     }
 
-    fun registerUser(bodyParams: UserSignUpRequest): UserDataResponse {
-        val pwHash = hashEncoder.hashPasswd(bodyParams.password)
+    fun registerUser(@Valid bodyParams: UserSignUpRequest): UserDataResponse {
         val user = User(
             id = ObjectId.get(),
             fullName = bodyParams.fullName,
@@ -57,15 +59,19 @@ class AuthService(
             emailAddress = bodyParams.emailAddress,
             phoneNumber = bodyParams.phoneNumber,
             createdAt = Instant.now(),
-            passwordHash = pwHash.passwordHash,
+            passwordHash = hashEncoder.hashPasswd(
+                bodyParams.password
+                ).passwordHash,
             updatedAt = Instant.now()
         )
-        val response = userRepository.save<User>(user)
-        return response.toResponse()
+        if (emailValidation.validateUserEmail(user.emailAddress)?.smtp_check != true){
+            throw ResponseStatusException(HttpStatus.valueOf(400), "Invalid Email Address")
+        }
+        return userRepository.save<User>(user).toResponse()
     }
 
     fun saveRefreshToken(userId: ObjectId, jwtRefreshToken: String): HttpStatus{
-        return try{
+        return try {
             val tokenHash = tokenEncoder.hashToken(jwtRefreshToken)
             val refreshTokenValidityMs: Long = 2L * 24L * 60 * 60 * 1000
             tokenRepository.save(

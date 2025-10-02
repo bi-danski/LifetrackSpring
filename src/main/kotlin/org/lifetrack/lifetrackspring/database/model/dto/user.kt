@@ -43,3 +43,13 @@ data class LoginAuthRequest(
     @field:NotNull(message = "Password can't be null")
     val password: String
 )
+
+data class EmailValResponse(
+    val email: String,
+    val format_valid: Boolean,
+    val mx_found: Boolean,
+    val smtp_check: Boolean,
+    val disposable: Boolean,
+    val score: Double,
+    val free: Boolean
+)

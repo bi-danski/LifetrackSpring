@@ -15,9 +15,9 @@ data class User(
     val passwordHash: String,
     val createdAt: Instant,
     val updatedAt: Instant,
-    val insuranceRefId: ObjectId? = null,
     val emergencyContact: EmergencyContact? = null,
-    val billingRefId: String? = null,
+    val insuranceRefId: ObjectId? = null,
+    val billingReferenceId: String? = null,
     val vitalReferenceId: ObjectId? = null,
     val userVisitsReferenceId: ObjectId? = null,
     val medicalRecordsReferenceId: ObjectId? = null
