@@ -7,6 +7,7 @@ import org.bson.types.ObjectId
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
@@ -14,8 +15,8 @@ import kotlin.io.encoding.ExperimentalEncodingApi
 class JwtService(
     @param:Value("\${jwt.secret}") private val jwtSecret: String
 ) {
-    private val accessTokenValidityMs: Long = 15 * 60 * 60 * 1000L
-    private val refreshTokenValidityMs: Long = 2L * 24L * 60 * 60 * 1000
+    private val accessTokenValidityMs: Long = TimeUnit.MINUTES.toMillis(15)
+    private val refreshTokenValidityMs: Long = TimeUnit.HOURS.toMillis(1)
     @OptIn(ExperimentalEncodingApi::class)
     private val jwtSecretKey = Keys.hmacShaKeyFor(Base64.decode(jwtSecret))
 

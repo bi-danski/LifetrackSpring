@@ -1,5 +1,7 @@
 package org.lifetrack.lifetrackspring.service
 
+import com.mongodb.MongoException
+import com.mongodb.MongoWriteException
 import jakarta.validation.Valid
 import org.bson.types.ObjectId
 import org.lifetrack.lifetrackspring.database.model.data.RefreshToken
@@ -20,7 +22,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
 import java.time.Instant
-import java.util.logging.Logger
+import java.util.concurrent.TimeUnit
 
 @Service
 class AuthService(
@@ -31,7 +33,6 @@ class AuthService(
     private val jwtService: JwtService,
     private val emailValidation: EmailValidation
 ) {
-    private val zanguZangu = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME)
     fun loginUser(@Valid bodyParams: LoginAuthRequest): TokenPair? {
         val response = userRepository.findByEmailAddress(bodyParams.emailAddress) ?: throw ResponseStatusException(HttpStatusCode.valueOf(401),"Invalid Credentials")
 
@@ -73,7 +74,7 @@ class AuthService(
     fun saveRefreshToken(userId: ObjectId, jwtRefreshToken: String): HttpStatus{
         return try {
             val tokenHash = tokenEncoder.hashToken(jwtRefreshToken)
-            val refreshTokenValidityMs: Long = 2L * 24L * 60 * 60 * 1000
+            val refreshTokenValidityMs: Long = TimeUnit.HOURS.toMillis(1)
             tokenRepository.save(
                 RefreshToken(
                     userId = userId,
@@ -83,8 +84,9 @@ class AuthService(
                 )
             )
             HttpStatus.CREATED
-        }catch (e: Exception){
-            zanguZangu.log(zanguZangu.level, e.message)
+        }catch (_: MongoWriteException){
+            HttpStatus.UNPROCESSABLE_ENTITY
+        }catch (_: MongoException){
             HttpStatus.INTERNAL_SERVER_ERROR
         }
     }
@@ -111,6 +113,5 @@ class AuthService(
         return TokenPair(newAccToken,
             newRefToken)
     }
-
 
 }

@@ -10,7 +10,7 @@ import org.springframework.web.util.UriComponentsBuilder
 class EmailValidation(
     @param:Value("\${mailplayer.access}") private val mailAccesskey: String
 ) {
-    final val restTemplate = RestTemplate()
+    private val restTemplate = RestTemplate()
 
     fun validateUserEmail(emailAddress: String): EmailValResponse?{
         val uri = UriComponentsBuilder
