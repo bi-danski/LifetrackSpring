@@ -17,6 +17,7 @@ class JwtService(
 ) {
     private val accessTokenValidityMs: Long = TimeUnit.MINUTES.toMillis(15)
     private val refreshTokenValidityMs: Long = TimeUnit.HOURS.toMillis(1)
+
     @OptIn(ExperimentalEncodingApi::class)
     private val jwtSecretKey = Keys.hmacShaKeyFor(Base64.decode(jwtSecret))
 
@@ -24,8 +25,8 @@ class JwtService(
         expiration: Long,
         subjectId: String,
         type: String
-    ): String{
-        val now  = Date()
+    ): String {
+        val now = Date()
         return Jwts.builder()
             .subject(subjectId)
             .claim("type", type)
@@ -35,49 +36,43 @@ class JwtService(
             .compact()
     }
 
-    fun generateAccessToken(uid: ObjectId): String{
-        return generateToken(expiration = accessTokenValidityMs,
-            subjectId = uid.toHexString(),
-            type = "access"
+    fun generateAccessToken(uid: ObjectId): String =
+        generateToken(
+            accessTokenValidityMs,
+            uid.toHexString(),
+            "access"
         )
-    }
 
-    fun generateRefreshToken(uid: ObjectId): String{
-        return generateToken(expiration = refreshTokenValidityMs,
-            subjectId = uid.toHexString(),
-            type = "refresh"
-            )
-    }
+    fun generateRefreshToken(uid: ObjectId): String =
+        generateToken(
+            refreshTokenValidityMs,
+            uid.toHexString(),
+            "refresh"
+        )
 
-    fun parseJwtTokenClaims(jwtToken: String): Claims?{
-        if (jwtToken.startsWith("Bearer ")){
+    fun parseJwtTokenClaims(jwtToken: String): Claims? {
+        val token = if (jwtToken.startsWith("Bearer ")) {
             jwtToken.removePrefix("Bearer ")
-        }
+        } else jwtToken
         return Jwts.parser()
             .verifyWith(jwtSecretKey)
             .build()
-            .parseSignedClaims(jwtToken)
+            .parseSignedClaims(token)
             .payload
     }
 
-    fun parseUserIdFromToken(jwtToken: String): String{
+    fun parseUserIdFromToken(jwtToken: String): String {
         val claims = parseJwtTokenClaims(jwtToken) ?: throw IllegalArgumentException("Invalid Token")
         return claims.subject
     }
 
-    fun validateAccessToken(jwtAccessToken: String): Boolean{
-        val accessClaims = parseJwtTokenClaims(jwtAccessToken)
-        if (accessClaims.isNullOrEmpty()){
-            return false
-        }
-        return accessClaims["type"] == "access"
+    fun validateAccessToken(jwtAccessToken: String): Boolean {
+        val claims = parseJwtTokenClaims(jwtAccessToken) ?: return false
+        return claims["type"] == "access"
     }
 
-    fun validateRefreshToken(jwtRefreshToken: String): Boolean{
-        val refreshClaims = parseJwtTokenClaims(jwtRefreshToken)
-        if (refreshClaims.isNullOrEmpty()){
-            return false
-        }
-        return refreshClaims["type"] == "refresh"
+    fun validateRefreshToken(jwtRefreshToken: String): Boolean {
+        val claims = parseJwtTokenClaims(jwtRefreshToken) ?: return false
+        return claims["type"] == "refresh"
     }
 }

@@ -68,6 +68,7 @@ class AuthService(
         if (emailValidation.validateUserEmail(user.emailAddress)?.smtp_check != true){
             throw ResponseStatusException(HttpStatus.valueOf(400), "Invalid Email Address")
         }
+
         return userRepository.save<User>(user).toResponse()
     }
 
