@@ -8,7 +8,6 @@ import org.lifetrack.lifetrackspring.database.model.data.RefreshToken
 import org.lifetrack.lifetrackspring.database.model.data.TokenPair
 import org.lifetrack.lifetrackspring.database.model.data.User
 import org.lifetrack.lifetrackspring.database.model.dto.LoginAuthRequest
-import org.lifetrack.lifetrackspring.database.model.dto.UserDataResponse
 import org.lifetrack.lifetrackspring.database.model.dto.UserSignUpRequest
 import org.lifetrack.lifetrackspring.database.model.helpers.toResponse
 import org.lifetrack.lifetrackspring.database.repository.TokenRepository
@@ -52,7 +51,7 @@ class AuthService(
         }
     }
 
-    fun registerUser(@Valid bodyParams: UserSignUpRequest): UserDataResponse {
+    fun registerUser(@Valid bodyParams: UserSignUpRequest): HttpStatus {
         val user = User(
             id = ObjectId.get(),
             fullName = bodyParams.fullName,
@@ -62,14 +61,23 @@ class AuthService(
             createdAt = Instant.now(),
             passwordHash = hashEncoder.hashPasswd(
                 bodyParams.password
-                ).passwordHash,
+            ).passwordHash,
             updatedAt = Instant.now()
         )
-        if (emailValidation.validateUserEmail(user.emailAddress)?.smtp_check != true){
-            throw ResponseStatusException(HttpStatus.valueOf(400), "Invalid Email Address")
-        }
+        return try {
+            if (!emailValidation.validateUserEmailByExpression(user.emailAddress) &&
+                emailValidation.validateUserEmail(user.emailAddress)?.smtp_check != true
+            ) {
+                return HttpStatus.NOT_ACCEPTABLE
+            }
 
-        return userRepository.save<User>(user).toResponse()
+            userRepository.save<User>(user).toResponse()
+            HttpStatus.CREATED
+        } catch (_: MongoWriteException) {
+            HttpStatus.UNPROCESSABLE_ENTITY
+        } catch (_: MongoException) {
+            HttpStatus.INTERNAL_SERVER_ERROR
+        }
     }
 
     fun saveRefreshToken(userId: ObjectId, jwtRefreshToken: String): HttpStatus{
@@ -108,9 +116,9 @@ class AuthService(
         tokenRepository.deleteByUserIdAndTokenHash(user.id, hashedToken)
         val newAccToken = jwtService.generateAccessToken(user.id)
         val newRefToken = jwtService.generateRefreshToken(user.id)
-        saveRefreshToken(user.id,
-            newRefToken)
-
+        if (!saveRefreshToken(user.id,newRefToken).is2xxSuccessful){
+            throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR)
+        }
         return TokenPair(newAccToken,
             newRefToken)
     }

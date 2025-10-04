@@ -12,14 +12,35 @@ class EmailValidation(
 ) {
     private val restTemplate = RestTemplate()
 
-    fun validateUserEmail(emailAddress: String): EmailValResponse?{
+    fun validateUserEmail(emailAddress: String): EmailValResponse? {
         val uri = UriComponentsBuilder
-            .fromUriString("https://https://apilayer.net/api/check")
-            .queryParam("access_key", mailAccesskey)
+            .fromUriString("https://api.apilayer.com/email_verification/check")
             .queryParam("email", emailAddress.trim())
-            .queryParam("smtp", 1)
-            .queryParam("format", 1)
             .toUriString()
-        return restTemplate.getForObject(uri, EmailValResponse::class.java)
+
+        val headers = org.springframework.http.HttpHeaders().apply {
+            set("apikey", mailAccesskey)  // ✅ new required header
+        }
+
+        val entity = org.springframework.http.HttpEntity<String>(headers)
+
+        val response = restTemplate.exchange(
+            uri,
+            org.springframework.http.HttpMethod.GET,
+            entity,
+            EmailValResponse::class.java
+        )
+
+        return response.body
     }
+
+    fun validateUserEmailByExpression(emailAddress: String): Boolean {
+        val regex = Regex(
+            "^(?=.{1,254}$)(?=.{1,64}@)[A-Za-z0-9!#\$%&'*+/=?^_`{|}~-]+(?:\\.[A-Za-z0-9!#\$%&'*+/=?^_`{|}~-]+)*@" +
+                    "(?:(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\\.)+[A-Za-z]{2,}|" +
+                    "\\[(?:(?:25[0-5]|2[0-4]\\d|[01]?\\d?\\d)\\.){3}(?:25[0-5]|2[0-4]\\d|[01]?\\d?\\d)\\])$"
+        )
+        return regex.matches(emailAddress)
+    }
+
 }

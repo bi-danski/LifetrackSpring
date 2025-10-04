@@ -21,12 +21,12 @@ data class UserSignUpRequest(
     @field:NotNull(message="Email address can't be null")
     @field:Email(message = "Invalid email address format")
     val emailAddress: String,
-    val phoneNumber: Int,
+    val phoneNumber: Long,
 )
 
 data class UserDataResponse(
     val fullName: String?,
-    val phoneNumber: Int,
+    val phoneNumber: Long,
     val userName: String,
     val emailAddress: String,
     val createdAt: Instant

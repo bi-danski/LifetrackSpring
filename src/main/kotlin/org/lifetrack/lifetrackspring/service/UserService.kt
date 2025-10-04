@@ -50,9 +50,7 @@ class UserService(
             val updatedCopy = userRepository.findUserById(userId).copy(
                 fullName = userInfo.fullName?.ifEmpty { existingCopy.fullName },
                 emailAddress = userInfo.emailAddress.ifEmpty { existingCopy.emailAddress },
-                phoneNumber = if (userInfo.phoneNumber.toString()
-                        .isNotEmpty()
-                ) userInfo.phoneNumber else existingCopy.phoneNumber,
+                phoneNumber = if (userInfo.phoneNumber.toString().isNotEmpty()) userInfo.phoneNumber else existingCopy.phoneNumber,
                 passwordHash = if (userInfo.password.isNotEmpty()) hashEncoder.hashPasswd(userInfo.password).passwordHash else existingCopy.passwordHash,
                 updatedAt = Instant.now()
             )

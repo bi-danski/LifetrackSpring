@@ -22,13 +22,11 @@ class SecurityConfig(
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests { authReqConfigurer ->
                 authReqConfigurer
-                    .requestMatchers("/auth/**")
-                    .permitAll()
+                    .requestMatchers("/auth/**").permitAll()
                     .dispatcherTypeMatchers(
                         DispatcherType.ERROR,
                         DispatcherType.FORWARD
-                    )
-                    .permitAll()
+                    ).permitAll()
                     .anyRequest()
                     .authenticated()
             }

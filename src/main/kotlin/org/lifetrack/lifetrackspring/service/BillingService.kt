@@ -52,7 +52,7 @@ class BillingService(
         }
     }
 
-    fun retrieveBillings(userId: ObjectId): Billings{
+    fun retrieveBillings(userId: ObjectId): Billings?{
         return billingRepository.findBillingsByOwnerId(userId)
     }
 
