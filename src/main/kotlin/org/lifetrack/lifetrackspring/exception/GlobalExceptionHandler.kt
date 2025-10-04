@@ -77,7 +77,7 @@ class GlobalExceptionHandler {
             .body(
                 mapOf(
                     "error" to ex.localizedMessage,
-                    "details" to ex.stackTraceToString(),
+                    "html" to html,
                 )
             )
     }

@@ -16,5 +16,11 @@ fun User.toResponse(): UserDataResponse {
 }
 
 fun UserVitals.toVitalsResponse(): VitalsResponse {
-    return VitalsResponse(this.pulse, this.bloodPressure, this.bodyTemperature, this.respiratoryRate, this.oxygenSaturation)
+    return VitalsResponse(
+        this.pulse,
+        this.bloodPressure,
+        this.bodyTemperature,
+        this.respiratoryRate,
+        this.oxygenSaturation
+    )
 }
