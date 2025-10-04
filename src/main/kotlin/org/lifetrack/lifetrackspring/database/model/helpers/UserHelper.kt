@@ -8,7 +8,7 @@ import org.lifetrack.lifetrackspring.database.model.dto.VitalsResponse
 fun User.toResponse(): UserDataResponse {
     return UserDataResponse(
         this.fullName,
-        this.phoneNumber.toLong(),
+        this.phoneNumber,
         this.userName,
         this.emailAddress,
         this.createdAt
