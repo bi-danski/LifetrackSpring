@@ -10,10 +10,12 @@ import org.lifetrack.lifetrackspring.database.model.data.Billing
 import org.lifetrack.lifetrackspring.database.model.data.Billings
 import org.lifetrack.lifetrackspring.database.model.dto.BillingRequest
 import org.lifetrack.lifetrackspring.database.repository.BillingRepository
+import org.lifetrack.lifetrackspring.exception.ResourceNotFound
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.server.ResponseStatusException
 import java.time.Instant
 
 @Service
@@ -44,6 +46,7 @@ class BillingService(
         )
         return try {
             billingRepository.save<Billings>(newBillings)
+            ResponseStatusException(HttpStatus.CREATED)
             HttpStatus.CREATED
         }catch (_: MongoException){
             HttpStatus.INTERNAL_SERVER_ERROR
@@ -52,7 +55,10 @@ class BillingService(
         }
     }
 
-    fun retrieveBillings(userId: ObjectId): Billings?{
+    fun retrieveBillings(userId: ObjectId): Billings{
+        if (!billingRepository.existsBillingsByOwnerId(userId)){
+            throw ResourceNotFound(HttpStatus.NOT_FOUND.toString())
+        }
         return billingRepository.findBillingsByOwnerId(userId)
     }
 

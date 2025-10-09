@@ -8,7 +8,6 @@ import org.lifetrack.lifetrackspring.service.BillingService
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.server.ResponseStatusException
 
 @RestController
 @RequestMapping("/user/billing")
@@ -19,23 +18,21 @@ class BillingController(
 
     @GetMapping
     fun getUserBillings(): BillingResponse {
-        val results = billingService.retrieveBillings(userId())?.toBillingsResponse() ?: throw ResponseStatusException(
-            HttpStatus.NOT_FOUND
-        )
-        return results
+        return billingService.retrieveBillings(userId()).toBillingsResponse()
+
     }
 
-    @PatchMapping
+    @PatchMapping("/amend")
     fun updateUserBillings(@RequestBody body: BillingRequest): HttpStatus{
         return billingService.amendBillings(userId(), body)
     }
 
-    @PostMapping
+    @PostMapping("/init")
     fun createUserBillings(@RequestBody body: BillingRequest): HttpStatus{
         return billingService.createBillings(userId = userId(), billingRequest = body)
     }
 
-    @DeleteMapping
+    @DeleteMapping("/wipe")
     fun deleteUserBillings(): HttpStatus{
         return billingService.eraseBillings(userId())
     }

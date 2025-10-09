@@ -42,43 +42,18 @@ class GlobalExceptionHandler {
             .body(html)
     }
 
-    @ExceptionHandler(Exception::class)
-    fun handleGeneral(ex: Exception): ResponseEntity<Map<String, Any>> {
-        val errorCode = HttpStatus.INTERNAL_SERVER_ERROR.value()
-        val errorMessage = ex.message ?: "Server can't do that! Try again next time"
-
-        val html = """
-        <!doctype html>
-        <html lang="en">
-        <head>
-          <meta charset="utf-8"/>
-          <meta name="viewport" content="width=device-width,initial-scale=1"/>
-          <title>$errorCode - Internal Server Error</title>
-          <style>
-            body { font-family: Arial, sans-serif; background:#fff5f5; color:#991b1b;
-                   display:flex; align-items:center; justify-content:center; height:100vh; margin:0; }
-            .card { background:white; border-radius:8px; padding:28px; 
-                    box-shadow:0 6px 20px rgba(16,24,40,0.08); max-width:720px; width:90%; text-align:center; }
-            h1 { margin:0 0 8px 0; font-size:28px; }
-            p { margin:0; color:#b91c1c; }
-          </style>
-        </head>
-        <body>
-          <div class="card">
-            <h1>$errorCode — Internal Server Error</h1>
-            <p>$errorMessage</p>
-          </div>
-        </body>
-        </html>
-    """.trimIndent()
-
-        return ResponseEntity
-            .status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(
-                mapOf(
-                    "error" to ex.localizedMessage,
-                    "html" to html,
-                )
-            )
-    }
+//    @ExceptionHandler(Exception::class)
+//    fun handleGeneral(ex: Exception): ResponseEntity<Map<String, Any>> {
+//        val errorCode = HttpStatus.INTERNAL_SERVER_ERROR.value()
+//        val errorMessage = ex.message ?: "Server can't do that! Try again next time"
+//
+//
+//        return ResponseEntity
+//            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+//            .body(
+//                mapOf(
+//                    "error" to  "Server can't do that! Try again next time",
+//                )
+//            )
+//    }
 }

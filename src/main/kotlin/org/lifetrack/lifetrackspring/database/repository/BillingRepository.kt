@@ -8,4 +8,5 @@ interface BillingRepository: MongoRepository<Billings, ObjectId> {
     fun findBillingsByOwnerId(ownerId: ObjectId): Billings
     fun deleteBillingsByOwnerId(ownerId: ObjectId)
     fun existsBillingsById(id: ObjectId): Boolean
+    fun existsBillingsByOwnerId(ownerId: ObjectId): Boolean
 }
