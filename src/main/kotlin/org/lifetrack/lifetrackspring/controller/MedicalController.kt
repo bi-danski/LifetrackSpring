@@ -57,7 +57,7 @@ class MedicalController(
     }
 
     @DeleteMapping("/lab")
-    fun deleteUserMedicalLabResult(body: VRequest): HttpStatus{
+    fun deleteUserMedicalLabResult(body: MedicalDelRequest): HttpStatus{
         return try {
             visitService.eraseVisitLabResults(
                 ObjectId(body.visitId),
@@ -88,7 +88,7 @@ class MedicalController(
 
 
     @DeleteMapping(path=["/prescriptions/{id}"])
-    fun deleteUserMedicalPrescription( body: VRequest): HttpStatus{
+    fun deleteUserMedicalPrescription( body: MedicalDelRequest): HttpStatus{
         return try {
             visitService.eraseVisitPrescription(
                 ObjectId(body.visitId),
@@ -118,7 +118,7 @@ class MedicalController(
     }
 
     @DeleteMapping("diagnosis")
-    fun deleteUserMedicalDiagnosis( body: VRequest): HttpStatus{
+    fun deleteUserMedicalDiagnosis( body: MedicalDelRequest): HttpStatus{
         return try {
             visitService.eraseVisitDiagnosis(
                 ObjectId(body.visitId),

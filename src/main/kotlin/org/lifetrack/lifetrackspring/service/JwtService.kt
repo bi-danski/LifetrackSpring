@@ -13,13 +13,13 @@ import kotlin.io.encoding.ExperimentalEncodingApi
 
 @Service
 class JwtService(
-    @param:Value("\${jwt.secret}") private val jwtSecret: String
+    @param:Value("\${jwt.siri}") private val jwtSiri: String
 ) {
     private val accessTokenValidityMs: Long = TimeUnit.MINUTES.toMillis(15)
     private val refreshTokenValidityMs: Long = TimeUnit.HOURS.toMillis(1)
 
     @OptIn(ExperimentalEncodingApi::class)
-    private val jwtSecretKey = Keys.hmacShaKeyFor(Base64.decode(jwtSecret))
+    private val jwtSecretKey = Keys.hmacShaKeyFor(Base64.decode(jwtSiri))
 
     private fun generateToken(
         expiration: Long,

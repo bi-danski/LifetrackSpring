@@ -68,7 +68,7 @@ data class UserDiagnosisRequest(
     val diagnosisUpdate: DiagnosisUpdate
 )
 
-data class VRequest(
+data class MedicalDelRequest(
     val visitId: String,
     val id: String
 )

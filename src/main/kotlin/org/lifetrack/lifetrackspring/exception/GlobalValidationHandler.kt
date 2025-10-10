@@ -24,8 +24,9 @@ class GlobalValidationHandler {
             .body(mapOf(
                 "status" to HttpStatus.BAD_REQUEST.value(),
                 "details" to "Validation failed",
-                "errors" to errors
-            ))
+//                "errors" to errors
+                )
+            )
     }
 }
 

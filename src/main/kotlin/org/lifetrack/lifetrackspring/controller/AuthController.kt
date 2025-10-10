@@ -7,10 +7,7 @@ import org.lifetrack.lifetrackspring.database.model.dto.LoginAuthRequest
 import org.lifetrack.lifetrackspring.database.model.dto.UserSignUpRequest
 import org.lifetrack.lifetrackspring.service.AuthService
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 
 @RestController
@@ -18,6 +15,9 @@ import org.springframework.web.server.ResponseStatusException
 class AuthController(
     private val authService: AuthService
 ) {
+    @GetMapping
+    fun authResponder() = ResponseStatusException(HttpStatus.NOT_FOUND)
+
     @PostMapping("/register")
     fun register(@Valid @RequestBody body: UserSignUpRequest): HttpStatus {
         return authService.registerUser(bodyParams = body)

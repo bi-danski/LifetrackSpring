@@ -23,7 +23,6 @@ class JwtAuthFilter(
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             val token = authHeader.substring(7)
-
             if (jwtService.validateAccessToken(token)) {
                 val userId = jwtService.parseUserIdFromToken(token)
                 val auth = UsernamePasswordAuthenticationToken(
@@ -34,7 +33,6 @@ class JwtAuthFilter(
                 SecurityContextHolder.getContext().authentication = auth
             }
         }
-
         filterChain.doFilter(request, response)
     }
 }
