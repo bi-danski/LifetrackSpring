@@ -20,7 +20,7 @@ class VitalsController(
         return vitalService.retrieveVitals(userId()).toVitalsResponse()
     }
 
-    @PostMapping
+    @PostMapping()
     fun saveUserVitals(@RequestBody body: VitalsDataRequest): HttpStatus{
         vitalService.storeVitals(body, userId())
         return HttpStatus.OK

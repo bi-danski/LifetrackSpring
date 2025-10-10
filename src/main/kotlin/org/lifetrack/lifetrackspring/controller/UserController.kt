@@ -7,6 +7,7 @@ import org.lifetrack.lifetrackspring.service.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 
 @RestController
 @RequestMapping("/user")
@@ -16,16 +17,19 @@ class UserController(
     final fun userId() = ObjectId(SecurityContextHolder.getContext().authentication.principal as String)
 
     @GetMapping
+    fun userResponder() = ResponseStatusException(HttpStatus.NOT_FOUND)
+
+    @GetMapping("/info")
     fun getUserData():  UserDataResponse{
         return userService.retrieveUserData(userId())
     }
 
-    @DeleteMapping
+    @DeleteMapping("/deleteMyAccount")
     fun wipeUserData(): HttpStatus {
         return userService.deleteUser(userId())
     }
 
-    @PatchMapping
+    @PatchMapping("/updateMyAccount")
     fun updateUserData(@RequestBody body: UserSignUpRequest): HttpStatus{
         return userService.updateUserData(userId(), body)
     }

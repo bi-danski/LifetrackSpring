@@ -117,7 +117,7 @@ class AuthService(
         val newAccToken = jwtService.generateAccessToken(user.id)
         val newRefToken = jwtService.generateRefreshToken(user.id)
         if (!saveRefreshToken(user.id,newRefToken).is2xxSuccessful){
-            throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR)
+            throw ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY)
         }
         return TokenPair(newAccToken,
             newRefToken)
